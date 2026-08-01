@@ -12,5 +12,6 @@ You've just joined RevoShop as a backend developer. Before writing a single line
 2. Run `seed.sql` to populate the tables with sample data.
 3. Run `queries.sql` to view and analyze the data.
 
-![Table of Diagram](images/digram.JPG)
+<img width="1298" height="787" alt="diagram" src="https://github.com/user-attachments/assets/f00218be-3b32-4116-96b2-3be3b3874d80" />
+
 
