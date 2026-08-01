@@ -12,5 +12,5 @@ You've just joined RevoShop as a backend developer. Before writing a single line
 2. Run `seed.sql` to populate the tables with sample data.
 3. Run `queries.sql` to view and analyze the data.
 
-![Deskripsi Gambar](C:\Users\ASUS\Documents\File danu\revoshop-db\image\diagram.JPG)
+![Table of Diagram](images/digram.JPG)
 
