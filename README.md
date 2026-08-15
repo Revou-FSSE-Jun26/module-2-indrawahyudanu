@@ -79,4 +79,4 @@ if __name__ == '__main__':
 
 ## Evidence & Testing
 
-image\post product.png
+C:\Users\ASUS\Documents\File danu\revoshop-db\image\post product.png
