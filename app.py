@@ -1,28 +1,21 @@
-form flask import Flask, jsonify
+from config import Config
+from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:1234567@localhost/revoshop_db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config.from_object(Config)
 
 db = SQLAlchemy(app)
 
-class user(db.model):
-    __tablename__='users'
-    id = db.column(db interger, primary_key=True)
-    username = db.column(db.string(100))
-    email = db.column(db.string(255))
-    created_at =
+with app.app_context():
+    from models import Product, User
 
-class product(db.model):
-    __tablename__ = 'produtcs'
-    id = db.column(db interger, primary_key=True)
-    name = db.column(db.string(100))
-    price = db.column(db.numeric(10, 2))
+    db.create_all()
 
+@app.route('/')
+def index():
+    return jsonify({"message": "Flask is connected to PostgreSQL!", "status": "ok"})
 
-
-
-
-
+if __name__ == '__main__':
+    app.run(debug=True)
