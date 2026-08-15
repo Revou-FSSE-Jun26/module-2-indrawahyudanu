@@ -1,39 +1,40 @@
---1. Table users
+-- 1. Table users
 CREATE TABLE users (
-    user_id       SERIAL PRIMARY KEY,
+    id            SERIAL PRIMARY KEY,
     username      VARCHAR(50)    NOT NULL UNIQUE,
     email         VARCHAR(100)   NOT NULL UNIQUE,
     created_at    TIMESTAMP      DEFAULT CURRENT_TIMESTAMP
 );
 
---2. Table categories
+-- 2. Table categories
 CREATE TABLE categories (
-    category_id  SERIAL PRIMARY KEY,
-    name           VARCHAR(100)    NOT NULL UNIQUE
+    id            SERIAL PRIMARY KEY,
+    name          VARCHAR(100)   NOT NULL UNIQUE
 );
 
---3. Table products
+-- 3. Table products
 CREATE TABLE products (
-    product_id    SERIAL PRIMARY KEY,
-    product_name  VARCHAR(100)   NOT NULL,
-    price         DECIMAL(10, 2) NOT NULL,
+    id            SERIAL PRIMARY KEY,
+    name          VARCHAR(100)   NOT NULL,
+    price         NUMERIC(10, 2) NOT NULL,
     stock         INTEGER        NOT NULL,
-    category_id   INTEGER        REFERENCES categories(category_id),
+    category_id   INTEGER        REFERENCES categories(id),
     created_at    TIMESTAMP      DEFAULT CURRENT_TIMESTAMP
 );
 
---4. Table orders
+-- 4. Table orders 
 CREATE TABLE orders (
-    order_id        SERIAL PRIMARY KEY,
-    user_id         INTEGER REFERENCES users(user_id),
-    total_amount    NUMERIC (10, 2) NOT NULL
+    id              SERIAL PRIMARY KEY,
+    user_id         INTEGER        REFERENCES users(id),
+    total_amount    NUMERIC(10, 2) NOT NULL,
+    order_date      TIMESTAMP      DEFAULT CURRENT_TIMESTAMP
 );
 
---5. table order_items
+-- 5. Table order_items 
 CREATE TABLE order_items (
-    order_item_id  SERIAL PRIMARY KEY,
-    order_id       INTEGER REFERENCES orders(order_id),
-    product_id     INTEGER REFERENCES products(product_id),
-    quantity       INTEGER NOT null,
-    subtotal       numeric not null
+    id             SERIAL PRIMARY KEY,
+    order_id       INTEGER        REFERENCES orders(id),
+    product_id     INTEGER        REFERENCES products(id),
+    quantity       INTEGER        NOT NULL,
+    subtotal       NUMERIC(10, 2) NOT NULL
 );

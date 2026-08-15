@@ -8,7 +8,7 @@ select * from orders;
 SELECT * FROM products 
 WHERE price > 100000.00;
 
---3. Display the 3 cheapest product 
+--3. Display the 3 cheapest product, max 3 data 
 SELECT * FROM products 
 ORDER BY price ASC 
 LIMIT 3;
