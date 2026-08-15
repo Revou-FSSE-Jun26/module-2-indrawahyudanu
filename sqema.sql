@@ -16,8 +16,10 @@ CREATE TABLE categories (
 CREATE TABLE products (
     id            SERIAL PRIMARY KEY,
     name          VARCHAR(100)   NOT NULL,
+    sku           VARCHAR(50)    NOT NULL UNIQUE,
     price         NUMERIC(10, 2) NOT NULL,
-    stock         INTEGER        NOT NULL,
+    stock         INTEGER        NOT NULL DEFAULT 0,
+    is_in_stock   BOOLEAN        NOT NULL TRUE,
     category_id   INTEGER        REFERENCES categories(id),
     created_at    TIMESTAMP      DEFAULT CURRENT_TIMESTAMP
 );

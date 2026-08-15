@@ -8,9 +8,10 @@ app.config.from_object(Config)
 
 db = SQLAlchemy(app)
 
-with app.app_context():
-    from models import Product, User
+from models import Product, User, Category, Order
+import routes
 
+with app.app_context():
     db.create_all()
 
 @app.route('/')
