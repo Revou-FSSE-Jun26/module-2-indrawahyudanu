@@ -69,7 +69,7 @@ def get_product(product_id):
 
 
 
-# POST — create a user
+# POST — create new user
 @app.route('/users', methods=['POST'])
 def create_user():
     try:

@@ -64,7 +64,7 @@ class Category(db.Model):
         }
 
 
-#4. Table order
+#4. Table orders
 class Order(db.Model):
     __tablename__= "orders"
 

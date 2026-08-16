@@ -31,4 +31,4 @@ def downgrade():
         batch_op.drop_column('password_hash')
         batch_op.drop_column('role')
 
-    # ### end Alembic commands ###
+    ### end Alembic commands ###
