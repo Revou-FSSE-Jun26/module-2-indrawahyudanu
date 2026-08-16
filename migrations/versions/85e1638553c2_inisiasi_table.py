@@ -62,3 +62,4 @@ def downgrade():
     op.drop_table('products')
     op.drop_table('categories')
     # ### end Alembic commands ###
+
