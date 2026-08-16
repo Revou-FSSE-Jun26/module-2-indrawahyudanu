@@ -11,7 +11,10 @@ db = SQLAlchemy(app)
 
 migrate = Migrate(app, db)
 
-from models import Product, User, Category, Order
+from models import Product
+from models import User
+from models import Category
+from models import Order
 import routes
 
 
@@ -22,4 +25,3 @@ def index():
 
 if __name__ == '__main__':
     app.run(debug=True)
-    

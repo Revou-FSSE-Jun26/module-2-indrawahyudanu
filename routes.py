@@ -1,6 +1,8 @@
 from flask import jsonify, request
+from werkzeug.security import generate_password_hash
 from app import app, db
 from models import Product
+from models import User
 
 # GET home route
 @app.route('/')
@@ -67,24 +69,26 @@ def get_product(product_id):
 
 
 
-        # POST — create a user
+# POST — create a user
 @app.route('/users', methods=['POST'])
 def create_user():
     try:
         data = request.get_json()
+        raw_password = data.get('password')
+        hashed_password = generate_password_hash(raw_password) if raw_password else None
         # TODO: Create a user instance from 'data', add to session, commit, return 201
-        user = user(
+        user = User(
             username=data.get('username'),
-            email=data.get('email')
+            email=data.get('email'),
+            password_hash=hashed_password
         )
         db.session.add(user)
         db.session.commit()
         return jsonify({"message":"user created",
-                        "product": user.to_dict(),
+                        "user": user.to_dict(),
                         "status":"ok"}),201
     except Exception as e:
         db.session.rollback()
         return jsonify({"message" :"error creating user",
                         "error" : str(e),
                         "status" : "error"}),400
-
