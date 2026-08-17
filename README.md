@@ -3,6 +3,14 @@
 
 You've just joined RevoShop as a backend developer. Before writing a single line of application code, your first task is to design and validate the database that will power the entire store: users, products, categories, orders, and the line items that link orders to products.
 
+## Tech Stack
+* **Python 3.14.6
+* **Flask** (Web Framework)
+* **PostgreSQL** (Database)
+* **Flask-SQLAlchemy** (ORM)
+* **Flask-Migrate** (Database Migration)
+* **Postman** (API Testing & Documentation)
+
 ## File Structure
 - `schema.sql`: Contains DDL scripts to create tables (`users`, `categories`, `products`, `orders`, and `order_items`).
 - `seed.sql`: Contains DML scripts to insert sample data (dummy data).
@@ -11,10 +19,23 @@ You've just joined RevoShop as a backend developer. Before writing a single line
 - `config.py` : Contains the database connection settings and application configurations. Key responsibilities include : Database URL Configuration and ORM Settings.
 - `models.py` : defines the database schema, table structures, relationships, and JSON serialization methods using SQLAlchemy ORM.
 - `routes.py` : Handles API endpoints, HTTP requests (GET, POST), business logic, and JSON responses.
+- `utils.py`  : module serves as a centralized location for helper functions and third-party library initializations
 
+## 📁 Structure Folder
+
+```text
+revoshop-backend/
+├── app.py              # Flask application entry point
+├── config.py           # Database & environment configurations
+├── models.py           # Database schema definitions (User, Product, Order, OrderItem)
+├── routes.py           # REST API endpoints (Users & Products)
+├── utils.py            # SQLAlchemy & Flask-Migrate initialization
+├── requirements.txt    # Python module dependencies list
+├── seed.sql            # Dummy data / initial seeding SQL script
+├── migrations/         # Flask-Migrate migration history folder
+└── image/              # Evidence screenshots storage folder
 
 ## Flask intro
-
 ### 1 . Instalation and activation VENV
 ```bash
  python -m venv venv
@@ -80,13 +101,13 @@ if __name__ == '__main__':
 <img src="image/post%20product.png" width="500" alt="evidence">
 
 ### Testing GET all products
-![evidence GET all products](image/Get%20Product.png)
+<img src="image/Get%20Product.png" width="500" alt="evidence GET all products">
 
 ### Testing GET products by ID
-![Evidence & Testing GET products by ID](image/GET%20one%20product%20by%20ID.png)
+<img src="image/GET%20one%20product%20by%20ID.png" width="500" alt="Evidence & Testing GET products by ID">
 
 ### Testing Handling Error 404
-![Evidence Testing Handling Error](image/Handling%20error%20404.PNG)
+<img src="image/Handling%20error%20404.PNG" width="500" alt="Evidence Testing Handling Error">
 
 ## Sampe POST user table
 ```bash
@@ -99,12 +120,13 @@ if __name__ == '__main__':
 }
 ```
 ### Testing POST user
-![evidence](image/post%20user.png)
+<img src="image/post%20user.png" width="500" alt="evidence">
 
 ### Testing GET user by ID
-![evidence](image/GET%20user%20by%20ID.PNG)
+<img src="image/GET%20user%20by%20ID.PNG" width="500" alt="evidence">
 
 ### Testing Handling Error 404
-![evidence](image/Handling%20error%20user.PNG)
+<img src="image/Handling%20error%20user.PNG" width="500" alt="evidence">
 
-
+###Adding role to Database
+<img src="image/role in dbrever.PNG" width="500" alt="evidence">
