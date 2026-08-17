@@ -86,4 +86,4 @@ if __name__ == '__main__':
 ![evidence GET all products](image/Get%20Product.png)
 
 ## Evidence & Testing GET products by ID
-![Evidence & Testing GET products by ID](image/GET%20one%20product%20by%20ID.pngGet%20Product.png)
+![Evidence & Testing GET products by ID](image/GET%20one%20product%20by%20ID.png)
