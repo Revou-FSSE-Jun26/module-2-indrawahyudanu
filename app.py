@@ -1,13 +1,14 @@
-from config import Config
 from flask import Flask, jsonify
 from flask_migrate import Migrate 
-from flask_sqlalchemy import SQLAlchemy
+from config import Config
+from utils import db
+from routes import main_bp
+
 
 app = Flask(__name__)
-
 app.config.from_object(Config)
 
-db = SQLAlchemy(app)
+db.init_app(app)
 
 migrate = Migrate(app, db)
 
@@ -17,11 +18,7 @@ from models import Category
 from models import Order
 import routes
 
-
-
-@app.route('/')
-def index():
-    return jsonify({"message": "Flask is connected to PostgreSQL!", "status": "ok"})
+app.register_blueprint(main_bp)
 
 if __name__ == '__main__':
     app.run(debug=True)

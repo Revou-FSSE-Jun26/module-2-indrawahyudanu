@@ -1,11 +1,14 @@
-from flask import jsonify, request
+from flask import Blueprint ,jsonify, request
 from werkzeug.security import generate_password_hash
-from app import app, db
+from utils import db
+
 from models import Product
 from models import User
 
+main_bp = Blueprint('main', __name__)
+
 # GET home route
-@app.route('/')
+@main_bp.route('/')
 def home():
     return jsonify({"message": "demo, status, oke "})
 
@@ -13,7 +16,7 @@ def home():
 
 
 # GET all products
-@app.route('/products', methods=['GET'])
+@main_bp.route('/products', methods=['GET'])
 def get_products():
     # TODO: Query all products, return as JSON list
     try:
@@ -26,7 +29,7 @@ def get_products():
 
 
     # POST — create a product
-@app.route('/products', methods=['POST'])
+@main_bp.route('/products', methods=['POST'])
 def create_product():
     try:
         data = request.get_json()
@@ -54,7 +57,7 @@ def create_product():
 
 
 # GET one product by ID
-@app.route('/products/<int:product_id>', methods=['GET'])
+@main_bp.route('/products/<int:product_id>', methods=['GET'])
 def get_product(product_id):
     # TODO: Fetch product by ID; return 404 if not found
     try:
@@ -70,7 +73,7 @@ def get_product(product_id):
 
 
 # POST — create new user
-@app.route('/users', methods=['POST'])
+@main_bp.route('/users', methods=['POST'])
 def create_user():
     try:
         data = request.get_json()
@@ -80,7 +83,8 @@ def create_user():
         user = User(
             username=data.get('username'),
             email=data.get('email'),
-            password_hash=hashed_password
+            password_hash=hashed_password,
+            role=data.get('role', 'user')
         )
         db.session.add(user)
         db.session.commit()
