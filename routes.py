@@ -7,28 +7,16 @@ from models import User
 
 main_bp = Blueprint('main', __name__)
 
+
+
+
 # GET home route
 @main_bp.route('/')
 def home():
     return jsonify({"message": "demo, status, oke "})
 
 
-
-
-# GET all products
-@main_bp.route('/products', methods=['GET'])
-def get_products():
-    # TODO: Query all products, return as JSON list
-    try:
-        products = Product.query.all()
-        return jsonify([product.to_dict() for product in products]), 200
-    except Exception as e:
-        return jsonify({"error" : str(e)}), 500
-
-
-
-
-    # POST — create a product
+# POST — create a product
 @main_bp.route('/products', methods=['POST'])
 def create_product():
     try:
@@ -39,6 +27,7 @@ def create_product():
             sku=data.get('sku'),
             stock=data.get('stock'),
             price=data.get('price'),
+            category_id=data.get('category_id'),
             is_in_stock=data.get('is_in_stock',True)
         )
         db.session.add(product)
@@ -53,7 +42,15 @@ def create_product():
                         "status" : "error"}),400
 
 
-
+# GET all products
+@main_bp.route('/products', methods=['GET'])
+def get_products():
+    # TODO: Query all products, return as JSON list
+    try:
+        products = Product.query.all()
+        return jsonify([product.to_dict() for product in products]), 200
+    except Exception as e:
+        return jsonify({"error" : str(e)}), 500
 
 
 # GET one product by ID

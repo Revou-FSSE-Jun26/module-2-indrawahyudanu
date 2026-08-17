@@ -67,15 +67,17 @@ if __name__ == '__main__':
 
 
 
-## Sampe POST users table
+## Sampe POST product table
 ```bash
-{
-    "name"        : "Bambang_pamungka",
-    "email"       : "bambangp@email.com",
-    "role"        : "customer",
-    "password"    : "rahasiadong"
-}
+ {
+        "name": "Monitor Lenovo",
+        "sku" : "MO_Lenovo_1",
+        "price": 15000000.0,
+        "stock" : "10",
+        "category_id" : "3"
+        
+    }
 ```
 
 ## Evidence & Testing
-![evidence](image/post%20user.png)
+![evidence](image/post%20product.pngpost product.png)
