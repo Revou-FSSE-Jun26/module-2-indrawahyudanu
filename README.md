@@ -4,7 +4,7 @@
 You've just joined RevoShop as a backend developer. Before writing a single line of application code, your first task is to design and validate the database that will power the entire store: users, products, categories, orders, and the line items that link orders to products.
 
 ## Tech Stack
-* **Python 3.14.6
+* **Python** 3.14.6
 * **Flask** (Web Framework)
 * **PostgreSQL** (Database)
 * **Flask-SQLAlchemy** (ORM)
@@ -38,7 +38,7 @@ revoshop-backend/
 ## Flask intro
 ### 1 . Instalation and activation VENV
 ```bash
- python -m venv venv
+python -m venv venv
 venv\Scripts\activate 
 ```
 
@@ -128,5 +128,5 @@ if __name__ == '__main__':
 ### Testing Handling Error 404
 <img src="image/Handling%20error%20user.PNG" width="500" alt="evidence">
 
-###Adding role to Database
+### Adding role to Database
 <img src="image/role in dbrever.PNG" width="500" alt="evidence">
