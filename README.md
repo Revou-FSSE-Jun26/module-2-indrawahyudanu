@@ -34,8 +34,10 @@ revoshop-backend/
 ├── seed.sql            # Dummy data / initial seeding SQL script
 ├── migrations/         # Flask-Migrate migration history folder
 └── image/              # Evidence screenshots storage folder
+```
 
 ## Flask intro
+
 ### 1 . Instalation and activation VENV
 ```bash
 python -m venv venv
@@ -98,10 +100,10 @@ if __name__ == '__main__':
 ## Evidence 
 
 ### Testing POST product
-<img src="image/post%20product.png" width="500" alt="evidence">
+<img src="image/post product.png" width="500" alt="evidence">
 
 ### Testing GET all products
-<img src="image/Get%20Product.png" width="500" alt="evidence GET all products">
+<img src="image/Get Product.png" width="500" alt="evidence GET all products">
 
 ### Testing GET products by ID
 <img src="image/GET%20one%20product%20by%20ID.png" width="500" alt="Evidence & Testing GET products by ID">
