@@ -67,14 +67,13 @@ if __name__ == '__main__':
 
 
 
-## Sampe POST PRODUCT
+## Sampe POST users table
 ```bash
 {
-    "name"        : "Laptop Gmaing ASUS",
-    "sku"         : "LTP-001",
-    "stock"       : 5,
-    "price"       : 15000000,
-    "is_in_stock" :true
+    "name"        : "Bambang_pamungka",
+    "email"       : "bambangp@email.com",
+    "role"        : "customer",
+    "password"    : "rahasiadong"
 }
 ```
 
