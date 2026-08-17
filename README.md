@@ -13,11 +13,6 @@ You've just joined RevoShop as a backend developer. Before writing a single line
 - `routes.py` : Handles API endpoints, HTTP requests (GET, POST), business logic, and JSON responses.
 
 
-## How to Use
-1. Run `schema.sql` on PostgreSQL to set up the database tables.
-2. Run `seed.sql` to populate the tables with sample data.
-3. Run `queries.sql` to view and analyze the data.
-
 ## Flask intro
 
 ### 1 . Instalation and activation VENV
@@ -79,11 +74,37 @@ if __name__ == '__main__':
     }
 ```
 
-## Evidence & Testing POST product
+## Evidence 
+
+### Testing POST product
 ![evidence](image/post%20product.png)
 
-## Evidence & Testing GET all products
+### Testing GET all products
 ![evidence GET all products](image/Get%20Product.png)
 
-## Evidence & Testing GET products by ID
+### Testing GET products by ID
 ![Evidence & Testing GET products by ID](image/GET%20one%20product%20by%20ID.png)
+
+### Testing Handling Error 404
+![Evidence Testing Handling Error](image/Handling%20error%20404.PNG)
+
+## Sampe POST user table
+```bash
+{
+    "username":"Bambang_pamungkas",
+    "email":"bambangp@email.com",
+    "role" : "customer",
+    "password" : "rahasiadong"
+    
+}
+```
+### Testing POST user
+![evidence](image/post%20user.png)
+
+### Testing GET user by ID
+![evidence](image/GET%20user%20by%20ID.PNG)
+
+### Testing Handling Error 404
+![evidence](image/Handling%20error%20user.PNG)
+
+

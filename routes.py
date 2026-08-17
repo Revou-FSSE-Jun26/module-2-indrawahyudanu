@@ -17,7 +17,7 @@ def home():
 
 
 # POST — create a product
-@main_bp.route('/products', methods=['POST'])
+@main_bp.route('/product', methods=['POST'])
 def create_product():
     try:
         data = request.get_json()
@@ -93,3 +93,16 @@ def create_user():
         return jsonify({"message" :"error creating user",
                         "error" : str(e),
                         "status" : "error"}),400
+
+# GET one user by ID
+@main_bp.route('/users/<int:user_id>', methods=['GET'])
+def get_user_by_id(user_id):
+    # TODO: Fetch product by ID; return 404 if not found
+    try:
+        user = User.query.get(user_id)
+        if user:
+            return jsonify(user.to_dict()), 200
+        else:
+            return jsonify({"error" : "user not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
