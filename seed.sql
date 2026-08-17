@@ -1,9 +1,10 @@
-INSERT INTO users (username, email) VALUES
-('budi_santoso', 'budi@gmail.com'),
-('siti_nurhaliza', 'siti@gmail.com'),
-('andi_wijaya', 'andi@gmail.com'),
-('dewi_lestari', 'dewi@gmail.com'),
-('eko_prasetyo', 'eko@gmail.com');
+INSERT INTO users (username, email, role, password_hash, created_at) VALUES 
+('Bambang_pamungkas', 'bambangp@email.com', 'customer', 'rahasia123', CURRENT_TIMESTAMP),
+('budi_santoso', 'budi@email.com','customer', 'rahasia123', CURRENT_TIMESTAMP),
+('siti_nurhaliza', 'siti@gmail.com','customer', 'rahasia123', CURRENT_TIMESTAMP),
+('andi_wijaya', 'andi@gmail.com','customer', 'rahasia123', CURRENT_TIMESTAMP),
+('dewi_lestari', 'dewi@gmail.com','customer', 'rahasia123', CURRENT_TIMESTAMP),
+('eko_prasetyo', 'eko@gmail.com', 'customer', 'rahasia123', CURRENT_TIMESTAMP);
 
 
 INSERT INTO categories (name) VALUES
