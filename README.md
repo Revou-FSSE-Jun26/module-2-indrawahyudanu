@@ -77,7 +77,7 @@ if __name__ == '__main__':
 ## Evidence 
 
 ### Testing POST product
-![evidence](image/post%20product.png)
+<img src="image/post%20product.png" width="500" alt="evidence">
 
 ### Testing GET all products
 ![evidence GET all products](image/Get%20Product.png)
