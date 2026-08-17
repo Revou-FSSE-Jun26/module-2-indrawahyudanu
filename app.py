@@ -12,12 +12,15 @@ db.init_app(app)
 
 migrate = Migrate(app, db)
 
+import models
+
 from models import Product
 from models import User
 from models import Category
 from models import Order
 import routes
 
+from routes import main_bp
 app.register_blueprint(main_bp)
 
 if __name__ == '__main__':
