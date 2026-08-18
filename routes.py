@@ -2,11 +2,11 @@ from flask import Blueprint ,jsonify, request
 from werkzeug.security import generate_password_hash
 from utils import db
 
+from models import Category
 from models import Product
 from models import User
 
-main_bp = Blueprint('main', __name__)
-
+main_bp = Blueprint('main', __name__, url_prefix='/shop')
 
 
 
@@ -66,7 +66,27 @@ def get_product(product_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# GET product by category ID
+@main_bp.route('/categories/<int:category_id>', methods=['GET'])
+def get_category(category_id):
+    category = Category.query.get_or_404(category_id)
 
+
+    return jsonify({
+    "id" : category.id,
+    "name" :category.name,
+    "products" : [
+        {
+            "id" :  product.id,
+            "name" : product.name,
+            "sku" : product.sku,
+            "price" : product.price,
+            "stock" : product.stock,
+            "is_in_stock": product.is_in_stock,
+        } for product in category.products
+        ]
+
+    }), 200
 
 
 # POST — create new user

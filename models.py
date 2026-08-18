@@ -30,11 +30,13 @@ class Category(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), unique=True, nullable=False)
+    products = db.relationship('Product', backref='category', lazy=True)
 
     def to_dict(self):
         return {
             "id": self.id,
-            "name": self.name
+            "name": self.name,
+            'products': [product.to_dict() for product in self.products]
         }
 
 
@@ -48,8 +50,8 @@ class Product(db.Model):
     price = db.Column(db.Float, nullable=False)
     stock = db.Column(db.Integer, nullable=False)
     is_in_stock = db.Column(db.Boolean, default=True)
-    category_id = db.Column(db.Integer, db.ForeignKey('categories.id'))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    category_id = db.Column(db.Integer, db.ForeignKey('categories.id'))
 
     def to_dict(self):
         return {
@@ -60,9 +62,8 @@ class Product(db.Model):
             "stock": self.stock,
             "is_in_stock": self.is_in_stock,
             "category_id": self.category_id,
-            "created_at": (
-                self.created_at.isoformat() if self.created_at else None
-            ),
+            "created_at": (self.created_at.isoformat() if self.created_at else None),
+            "category_name" : self.category.name if self.category else None
         }
 
 #4. Table orders

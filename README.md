@@ -100,6 +100,7 @@ if __name__ == '__main__':
 ## Evidence 
 
 ### Testing POST product
+image/post product.png
 <img src="image/post product.png" width="500" alt="evidence">
 
 ### Testing GET all products
