@@ -2,9 +2,12 @@ from flask import Blueprint ,jsonify, request
 from werkzeug.security import generate_password_hash
 from utils import db
 
+from models import User
 from models import Category
 from models import Product
-from models import User
+from models import Order
+from models import OrderItem
+
 
 main_bp = Blueprint('main', __name__, url_prefix='/shop')
 

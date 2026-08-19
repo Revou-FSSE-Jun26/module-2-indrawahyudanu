@@ -9,7 +9,6 @@ app = Flask(__name__)
 app.config.from_object(Config)
 
 db.init_app(app)
-
 migrate = Migrate(app, db)
 
 import models
@@ -18,6 +17,7 @@ from models import Product
 from models import User
 from models import Category
 from models import Order
+from models import OrderItem
 import routes
 
 from routes import main_bp

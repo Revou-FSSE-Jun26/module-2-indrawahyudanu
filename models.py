@@ -12,6 +12,7 @@ class User(db.Model):
     role = db.Column(db.String(20), nullable=False, server_default="'customer'")
     password_hash = db.Column(db.String(255), nullable=False, server_default="'passwordhas123'")
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    orders = db.relationship('Order', backref='user', lazy=True)
 
     def to_dict(self):
         return {
@@ -19,9 +20,7 @@ class User(db.Model):
             "username": self.username,
             "email": self.email,
             "role" : self.role,
-            "created_at": (
-                self.created_at.isoformat() if self.created_at else None
-            ),
+            "created_at": ( self.created_at.isoformat() if self.created_at else None),
         }
 
 # 2. Table category
@@ -36,7 +35,6 @@ class Category(db.Model):
         return {
             "id": self.id,
             "name": self.name,
-            'products': [product.to_dict() for product in self.products]
         }
 
 
@@ -52,6 +50,7 @@ class Product(db.Model):
     is_in_stock = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     category_id = db.Column(db.Integer, db.ForeignKey('categories.id'))
+    order_items = db.relationship('OrderItem', backref='product', lazy=True)
 
     def to_dict(self):
         return {
@@ -73,33 +72,34 @@ class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     total_amount = db.Column(db.Numeric(10, 2), nullable=False)
+    order_items = db.relationship('OrderItem', backref='order', lazy=True)
     order_date = db.Column(db.DateTime, default=datetime.utcnow)
+    
 
     def to_dict(self):
         return {
             "id": self.id,
             "user_id": self.user_id,
-            "total_amount": (
-                float(self.total_amount) if self.total_amount else 0.0),
+            "total_amount": ( float(self.total_amount) if self.total_amount else 0.0),
             "order_date": ( self.order_date.isoformat() if self.order_date else None
             ),
         }
 
-    #5. Table orders_item
-    class Order_item(db.Model):
-        __tablename__= "orders_items"
+#5. Table orders_item
+class OrderItem(db.Model):
+    __tablename__= "orders_items"
 
-        id = db.Column(db.Integer, primary_key=True)
-        order_id = db.Column(db.Integer, db.ForeignKey('orders.id'), nullable=False)
-        product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
-        quantity = db.Column(db.Integer, nullable=False)
-        subtotal = db.Column(db.Numeric(10, 2), nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    order_id = db.Column(db.Integer, db.ForeignKey('orders.id'), nullable=False)
+    product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
+    quantity = db.Column(db.Integer, nullable=False)
+    subtotal = db.Column(db.Numeric(10, 2), nullable=False)
 
     def to_dict(self):
         return {
-                    "id": self.id,
-                    "order_id": self.order_id,
-                    "product_id": self.product_id,
-                    "quantity": self.quantity,
-                    "subtotal": float(self.subtotal) if self.subtotal else 0.0
+                "id": self.id,
+                "order_id": self.order_id,
+                "product_id": self.product_id,
+                "quantity": self.quantity,
+                "subtotal": float(self.subtotal) if self.subtotal else 0.0
                 }
