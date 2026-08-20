@@ -7,7 +7,7 @@ class User(db.Model):
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(50), unique=True, nullable=False)
+    customer_name = db.Column(db.String(50), unique=True, nullable=False)
     email = db.Column(db.String(255), unique=True, nullable=False)
     role = db.Column(db.String(20), nullable=False, server_default="'customer'")
     password_hash = db.Column(db.String(255), nullable=False, server_default="'passwordhas123'")
@@ -17,7 +17,7 @@ class User(db.Model):
     def to_dict(self):
         return {
             "id": self.id,
-            "username": self.username,
+            "customer_name": self.customer_name,
             "email": self.email,
             "role" : self.role,
             "created_at": ( self.created_at.isoformat() if self.created_at else None),
@@ -74,15 +74,17 @@ class Order(db.Model):
     total_amount = db.Column(db.Numeric(10, 2), nullable=False)
     order_items = db.relationship('OrderItem', backref='order', lazy=True)
     order_date = db.Column(db.DateTime, default=datetime.utcnow)
+    status = db.Column(db.String(50), nullable=False, default='pending')
     
 
     def to_dict(self):
         return {
             "id": self.id,
             "user_id": self.user_id,
+            "customer_name" : self.user.customer_name if self.user else None,
             "total_amount": ( float(self.total_amount) if self.total_amount else 0.0),
-            "order_date": ( self.order_date.isoformat() if self.order_date else None
-            ),
+            "order_date": ( self.order_date.isoformat() if self.order_date else None),
+            "status": self.status
         }
 
 #5. Table orders_item
