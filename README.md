@@ -28,12 +28,15 @@ revoshop-backend/
 ├── app.py              # Flask application entry point
 ├── config.py           # Database & environment configurations
 ├── models.py           # Database schema definitions (User, Product, Order, OrderItem)
-├── routes.py           # REST API endpoints (Users & Products)
 ├── utils.py            # SQLAlchemy & Flask-Migrate initialization
 ├── requirements.txt    # Python module dependencies list
 ├── seed.sql            # Dummy data / initial seeding SQL script
 ├── migrations/         # Flask-Migrate migration history folder
-└── image/              # Evidence screenshots storage folder
+├── image/              # Evidence screenshots storage folder
+├─ routes/               
+    ├── __init__.py         
+    ├── products_routes.py    # Endpoint product
+    └── users_routes.py       # Endpoint users 
 ```
 
 ## Flask intro
