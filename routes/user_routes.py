@@ -1,6 +1,7 @@
 from flask import Blueprint ,jsonify, request
 from werkzeug.security import generate_password_hash, check_password_hash
 from utils import db
+from flask_jwt_extended import jwt_required
 
 from models import User
 
@@ -39,6 +40,7 @@ def create_user():
 
 #2=== GET one user by ID ====
 @user_bp.route('/<int:user_id>', methods=['GET'])
+@jwt_required ()
 def get_user_by_id(user_id):
     # TODO: Fetch product by ID; return 404 if not found
     try:

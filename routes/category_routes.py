@@ -3,7 +3,6 @@ from utils import db
 from models import Category
 
 
-
 category_bp = Blueprint('category', __name__, url_prefix='/categories')
 
 #Create a new category

@@ -7,7 +7,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 class User(db.Model):
     __tablename__ = "users"
 
-    id = db.Column(db.String, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     customer_name = db.Column(db.String(50), unique=True, nullable=False)
     email = db.Column(db.String(255), unique=True, nullable=False)
     role = db.Column(db.String(20), nullable=False, server_default="'customer'")
@@ -56,6 +56,7 @@ class Product(db.Model):
     stock = db.Column(db.Integer, nullable=False)
     is_in_stock = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    is_deleted = db.Column(db.Boolean, default=False, nullable=False, server_default='false')
     category_id = db.Column(db.Integer, db.ForeignKey('categories.id'))
     order_items = db.relationship('OrderItem', backref='product', lazy=True)
 
@@ -69,6 +70,7 @@ class Product(db.Model):
             "is_in_stock": self.is_in_stock,
             "category_id": self.category_id,
             "created_at": (self.created_at.isoformat() if self.created_at else None),
+            "is_deleted" : self.is_deleted,
             "category_name" : self.category.name if self.category else None
         }
 

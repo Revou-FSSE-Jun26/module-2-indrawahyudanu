@@ -5,7 +5,7 @@ from models import Product
 product_bp = Blueprint('product', __name__, url_prefix='/products')
 
 
-# POST — create new a product
+#1=================== POST — create new a product=================
 @product_bp.route('/', methods=['POST'])
 def create_product():
     try:
@@ -21,11 +21,11 @@ def create_product():
         )
         price = data.get('price')
         if price is None or price < 0:
-         return jsonify({
+            return jsonify({
         "message": "invalid price",
         "error": "price must be a non-negative number",
         "status": "error"
-         }), 400
+            }), 400
 
 
         db.session.add(product)
@@ -40,23 +40,23 @@ def create_product():
                         "status" : "error"}),400
 
 
-# GET all products
+#2=============== GET, List all products===============================
 @product_bp.route('/', methods=['GET'])
 def get_products():
     # TODO: Query all products, return as JSON list
     try:
-        products = Product.query.all()
+        products = Product.query.filter_by(is_deleted=False).all()
         return jsonify([product.to_dict() for product in products]), 200
     except Exception as e:
         return jsonify({"error" : str(e)}), 500
 
 
-# GET one product by ID
+# 3 ================ GET specific product by ID============================
 @product_bp.route('/<int:product_id>', methods=['GET'])
 def get_product(product_id):
     # TODO: Fetch product by ID; return 404 if not found
     try:
-        product = Product.query.get(product_id)
+        product = Product.query.filter_by(id=product_id, is_deleted=False).first()
         if product:
             return jsonify(product.to_dict()), 200
         else:
@@ -64,7 +64,7 @@ def get_product(product_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# PUTT update product
+# 4 ===============PUT, update product==================================
 @product_bp.route('/<int:product_id>',methods = ['PUT'])
 def get_product_by_id(product_id):
     try:
@@ -94,11 +94,11 @@ def get_product_by_id(product_id):
 @product_bp.route('/delete/<int:product_id>', methods=['DELETE'])
 def delete_product(product_id):
     try:
-        product = Product.query.get(product_id)
+        product = Product.query.filter_by(id=product_id, is_deleted=False).first()
         if not product:
             return jsonify({"error" : "product not found"}), 404
 
-        db.session.delete(product)
+        product.is_deleted = True
         db.session.commit()
 
         return jsonify({"message" : "product deleted"}), 200
