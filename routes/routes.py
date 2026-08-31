@@ -2,11 +2,6 @@ from flask import Blueprint ,jsonify, request
 from werkzeug.security import generate_password_hash, check_password_hash
 from utils import db
 
-
-from models import Category
-from models import Order
-from models import OrderItem
-
 home_bp = Blueprint('home', __name__, url_prefix='/home')
 
 
@@ -14,5 +9,3 @@ home_bp = Blueprint('home', __name__, url_prefix='/home')
 @home_bp.route('/new')
 def home():
     return jsonify({"message": "demo, status, oke "})
-
-

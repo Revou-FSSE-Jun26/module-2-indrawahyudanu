@@ -27,8 +27,12 @@ def create_category():
 
 # GET list all categories
 @category_bp.route('/', methods=['GET'])
-def get_category(category_id):
-    category = Category.query.get_or_404(category_id)
+def get_categories():
+    try:
+        categories = Category.query.all()
+        return jsonify([category.to_dict() for category in categories]), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 # GET product by category ID
 @category_bp.route('/<int:category_id>', methods=['GET'])

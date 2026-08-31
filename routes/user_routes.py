@@ -6,18 +6,23 @@ from models import User
 
 user_bp = Blueprint('users', __name__, url_prefix='/users')
 
-# POST — create new user
+#1== POST — create new user ====
 @user_bp.route('/', methods=['POST'])
 def create_user():
     try:
-        data = request.get_json()
-        raw_password = data.get('password')
-        hashed_password = generate_password_hash(raw_password) if raw_password else None
+        data = request.get_json() or {}
+        raw_password = data.get('password_hash')
+
+        if not raw_password:
+            return jsonify({'error': 'please fill the password'}), 400
+        
+        hashed_password = generate_password_hash(raw_password)
+
         # TODO: Create a user instance from 'data', add to session, commit, return 201
         user = User(
             customer_name=data.get('customer_name'),
             email=data.get('email'),
-            password_hash=hashed_password,
+            password_hash=data.get('hashed_password'),
             role=data.get('role', 'user')
         )
         db.session.add(user)
@@ -31,7 +36,8 @@ def create_user():
                         "error" : str(e),
                         "status" : "error"}),400
 
-# GET one user by ID
+
+#2=== GET one user by ID ====
 @user_bp.route('/<int:user_id>', methods=['GET'])
 def get_user_by_id(user_id):
     # TODO: Fetch product by ID; return 404 if not found

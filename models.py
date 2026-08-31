@@ -1,12 +1,13 @@
 from datetime import datetime
 from utils import db
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
-# 1. Table users
+#== 1. Table users====
 class User(db.Model):
     __tablename__ = "users"
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String, primary_key=True)
     customer_name = db.Column(db.String(50), unique=True, nullable=False)
     email = db.Column(db.String(255), unique=True, nullable=False)
     role = db.Column(db.String(20), nullable=False, server_default="'customer'")
@@ -14,7 +15,7 @@ class User(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     orders = db.relationship('Order', backref='user', lazy=True)
 
-    def to_dict(self):
+    def to_dict(self): 
         return {
             "id": self.id,
             "customer_name": self.customer_name,
@@ -23,7 +24,13 @@ class User(db.Model):
             "created_at": ( self.created_at.isoformat() if self.created_at else None),
         }
 
-# 2. Table category
+    def hashed_password(self, raw_pass):
+        self.password_hash = generate_password_hash(raw_pass)
+
+    def check_password(self, raw_pass):
+        return check_password_hash(self.password_hash, raw_pass)
+
+#=== 2. Table category====
 class Category(db.Model):
     __tablename__ = "categories"
 
@@ -38,7 +45,7 @@ class Category(db.Model):
         }
 
 
-# 3. Table Products
+#== 3. Table Products===
 class Product(db.Model):
     __tablename__ = "products"
 
@@ -65,7 +72,7 @@ class Product(db.Model):
             "category_name" : self.category.name if self.category else None
         }
 
-#4. Table orders
+#==4. Table orders===
 class Order(db.Model):
     __tablename__= "orders"
 
@@ -87,7 +94,7 @@ class Order(db.Model):
             "status": self.status
         }
 
-#5. Table orders_item
+#==5. Table orders_item===
 class OrderItem(db.Model):
     __tablename__= "orders_items"
 

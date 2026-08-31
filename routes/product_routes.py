@@ -19,6 +19,15 @@ def create_product():
             category_id=data.get('category_id'),
             is_in_stock=data.get('is_in_stock',True)
         )
+        price = data.get('price')
+        if price is None or price < 0:
+         return jsonify({
+        "message": "invalid price",
+        "error": "price must be a non-negative number",
+        "status": "error"
+         }), 400
+
+
         db.session.add(product)
         db.session.commit()
         return jsonify({"message":"product created",
