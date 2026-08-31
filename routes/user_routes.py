@@ -20,12 +20,12 @@ def create_user():
         hashed_password = generate_password_hash(raw_password)
 
         # TODO: Create a user instance from 'data', add to session, commit, return 201
-        user = User(
-            customer_name=data.get('customer_name'),
-            email=data.get('email'),
-            password_hash=data.get('hashed_password'),
-            role=data.get('role', 'user')
-        )
+        user = User(customer_name=data.get('customer_name'),
+                    email=data.get('email'),
+                    password_hash=hashed_password,
+                    role=data.get('role', 'user')
+                    )
+
         db.session.add(user)
         db.session.commit()
         return jsonify({"message":"user created",
