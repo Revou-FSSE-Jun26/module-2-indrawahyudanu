@@ -1,42 +1,48 @@
+# REVO SHOP BACKEND PROJECT
 
-# REVO SHOP DATABASE PROJECT
-
-You've just joined RevoShop as a backend developer. Before writing a single line of application code, your first task is to design and validate the database that will power the entire store: users, products, categories, orders, and the line items that link orders to products.
+Merupakan platform RESTful API yang dirancang untuk mendukung ekosistem *e-commerce* Revoshop. API ini menangani seluruh logika bisnis utama, mulai dari autentikasi pengguna, manajemen katalog produk, hingga pemrosesan transaksi pemesanan (*orders*).
+Backend ini dibangun menggunakan **Flask (Python)** dengan arsitektur modular (*Blueprints*), memanfaatkan **JSON** sebagai format pertukaran data (*data interchange format*), serta menggunakan **PostgreSQL** sebagai sistem manajemen basis data relasional.
 
 ## Tech Stack
 * **Python** 3.14.6
-* **Flask** (Web Framework)
+* **Flask 3.1.3** (Web Framework)
+* **Werkzeug 3.1.8** (hashing password)
 * **PostgreSQL** (Database)
-* **Flask-SQLAlchemy** (ORM)
-* **Flask-Migrate** (Database Migration)
+* **Flask-SQLAlchemy 2.0.52** (ORM)
+* **Flask-Migrate 4.1.0** (Database Migration)
 * **Postman** (API Testing & Documentation)
 
-## File Structure
-- `schema.sql`: Contains DDL scripts to create tables (`users`, `categories`, `products`, `orders`, and `order_items`).
-- `seed.sql`: Contains DML scripts to insert sample data (dummy data).
-- `queries.sql`: Contains SQL queries using `SELECT`, `WHERE`, `JOIN`, `ORDER BY`, and `LIMIT` for data analysis.
-- `app.py`: Serves as the main application entry point, containing Databse initialization, Route Model connection and Development server.
-- `config.py` : Contains the database connection settings and application configurations. Key responsibilities include : Database URL Configuration and ORM Settings.
-- `models.py` : defines the database schema, table structures, relationships, and JSON serialization methods using SQLAlchemy ORM.
-- `routes.py` : Handles API endpoints, HTTP requests (GET, POST), business logic, and JSON responses.
-- `utils.py`  : module serves as a centralized location for helper functions and third-party library initializations
-
-## 📁 Structure Folder
+## Project Structure
 
 ```text
-revoshop-backend/
-├── app.py              # Flask application entry point
-├── config.py           # Database & environment configurations
-├── models.py           # Database schema definitions (User, Product, Order, OrderItem)
-├── utils.py            # SQLAlchemy & Flask-Migrate initialization
-├── requirements.txt    # Python module dependencies list
-├── seed.sql            # Dummy data / initial seeding SQL script
-├── migrations/         # Flask-Migrate migration history folder
-├── image/              # Evidence screenshots storage folder
-├─ routes/               
-    ├── __init__.py         
-    ├── products_routes.py    # Endpoint product
-    └── users_routes.py       # Endpoint users 
+├── images/                 # Dokumentasi visual (Tangkapan layar API, diagram, & ERD)
+├── migrations/             # Folder migrasi database (Managed by Flask-Migrate / Alembic)
+├── app.py                  # Entry point (Application Factory & Blueprint Registration)
+├── config.py               # Konfigurasi aplikasi & database dari file .env
+├── models.py               # Model ORM (User, Category, Product, Order, OrderItem) & to_dict()
+├── utils.py                # Inisialisasi shared instance (db & migrate)
+│
+├── routes/                 # Folder Endpoints / Blueprints
+│   ├── auth_routes.py      # POST /login (JWT access & refresh token)
+│   ├── user_routes.py      # POST /users (register), GET /users/<id>
+│   ├── product_routes.py   # CRUD Product (Soft Delete & Validasi Harga)
+│   ├── category_routes.py  # CRUD Category (Include relasi produk)
+│   ├── order_routes.py     # CRUD Order & OrderItem (Protected @jwt_required)
+│   └── routes.py           # Home / Demo route
+│
+├── database/               # Skrip SQL & Database Tools
+│   ├── schema.sql          # DDL Skema tabel database
+│   ├── seed.sql            # DML Dummy data untuk pengujian
+│   └── queries.sql         # Contoh SQL query analitis
+│
+├── tests/                  # Pengujian Aplikasi
+│   └── pytest.ini          # Konfigurasi runner Pytest
+│
+├── .env                    # Environment variables (DB URL, JWT Secret)
+├── .gitignore              # Mengabaikan venv, .env, __pycache__, dll.
+├── requirements.txt        # Dependency lengkap (Production & Testing)
+├── requirements_dev.txt    # Dependency khusus lingkungan Development
+└── audit.sh                # Shell script opsional 
 ```
 
 ## Flask intro
