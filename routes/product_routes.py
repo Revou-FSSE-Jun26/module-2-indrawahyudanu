@@ -90,8 +90,8 @@ def get_product_by_id(product_id):
 
 
 
-#DELETE product by ID
-@product_bp.route('/delete/<int:product_id>', methods=['DELETE'])
+#5 ================DELETE product by ID======================
+@product_bp.route('/<int:product_id>', methods=['DELETE'])
 def delete_product(product_id):
     try:
         product = Product.query.filter_by(id=product_id, is_deleted=False).first()

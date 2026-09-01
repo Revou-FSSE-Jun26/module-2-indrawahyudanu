@@ -37,7 +37,7 @@ class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), unique=True, nullable=False)
     products = db.relationship('Product', backref='category', lazy=True)
-    is_deleted = db.Column(db.Boolean, default=False, nullable=False, server_default='false')
+    is_deleted = db.Column(db.Boolean, default=False, nullable=False, server_default='False')
 
     def to_dict(self):
         return {
@@ -57,7 +57,7 @@ class Product(db.Model):
     stock = db.Column(db.Integer, nullable=False)
     is_in_stock = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    is_deleted = db.Column(db.Boolean, default=False, nullable=False, server_default='false')
+    is_deleted = db.Column(db.Boolean, default=False, nullable=False, server_default='False')
     category_id = db.Column(db.Integer, db.ForeignKey('categories.id'))
     order_items = db.relationship('OrderItem', backref='product', lazy=True)
 
@@ -85,6 +85,7 @@ class Order(db.Model):
     order_items = db.relationship('OrderItem', backref='order', lazy=True)
     order_date = db.Column(db.DateTime, default=datetime.utcnow)
     status = db.Column(db.String(50), nullable=False, default='pending')
+    is_deleted = db.Column(db.Boolean, default=False, nullable=False, server_default='False')
     
 
     def to_dict(self):

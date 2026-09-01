@@ -30,6 +30,8 @@ def login():
         identity=str(is_user.id),
         additional_claims={"email": is_user.email})
 
+        refresh_token = create_refresh_token(identity=str(is_user.id))
+
         return jsonify({
         "success": True,
         "access_token": access_token

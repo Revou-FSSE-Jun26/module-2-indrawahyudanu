@@ -27,12 +27,14 @@ def create_app(config_class=Config):
     from routes.product_routes import product_bp
     from routes.category_routes import category_bp
     from routes.auth_routes import auth_bp
+    from routes.order_routes import order_bp
 
     app.register_blueprint(home_bp)
     app.register_blueprint(user_bp)
     app.register_blueprint(product_bp)
     app.register_blueprint(category_bp)
     app.register_blueprint(auth_bp)
+    app.register_blueprint(order_bp)
 
     return app
 

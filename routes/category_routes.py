@@ -5,7 +5,7 @@ from models import Category
 
 category_bp = Blueprint('category', __name__, url_prefix='/categories')
 
-#1=============Create a new category=======================
+#1==============Create a new category=================
 @category_bp.route('/', methods=['POST'])
 def create_category():
     try:
@@ -24,16 +24,18 @@ def create_category():
                         "error"   : str(e),
                         "status"  : "error"}), 400
 
-#2============== GET list all categories==================
+    
+
+#2==============GET list all categories=================
 @category_bp.route('/', methods=['GET'])
 def get_categories():
     try:
-        category = Category.query.filter_by(is_deleted=False).all()
+        categories = Category.query.filter_by(is_deleted=False).all()
         return jsonify([category.to_dict() for category in categories]), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-#3 ================GET product by category ID======================
+#3 ==============GET product by category ID=================
 @category_bp.route('/<int:category_id>', methods=['GET'])
 def get_category(category_id):
     category = Category.query.get_or_404(category_id)
