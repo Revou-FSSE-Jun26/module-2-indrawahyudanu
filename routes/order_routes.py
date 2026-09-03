@@ -25,7 +25,9 @@ def create_order():
     if not product:
         return jsonify({"success": False, "message": "Product not found"}), 404
 
-    total_amount = product.price * quantity
+    item_subtotal = float(product.price)*quantity
+    total_amount = item_subtotal
+    
 
     new_order = Order(
         user_id=int(current_user_id),
@@ -39,7 +41,7 @@ def create_order():
     order_id=new_order.id,
         product_id=product_id,
         quantity=quantity,
-        price=product.price
+        subtotal=item_subtotal
     )
     db.session.add(order_item)
 
@@ -62,27 +64,33 @@ def create_order():
 @jwt_required()
 def get_order():
     try:
-            products = Product.query.filter_by(is_deleted=False).all()
-            return jsonify([product.to_dict() for product in products]), 200
+            orders = Order.query.filter_by(is_deleted=False).all()
+
+            if not orders:
+                return jsonify({"succes":False,
+                                "message":"Data order tidak ditemukan"}), 404
+            return jsonify([order.to_dict() for order in orders]), 200
     except Exception as e:
             return jsonify({"error" : str(e)}), 500
 
 
 #3=========View a specific order===========
 @order_bp.route('/<int:order_id>', methods=['GET'])
+@jwt_required()
 def get_order_by_id(order_id):
     try:
         order = Order.query.filter_by(id=order_id, is_deleted=False).first()
         if order:
             return jsonify(order.to_dict()), 200
         else:
-            return jsonify({"error" : "product not found"}), 404
+            return jsonify({"error" : "Order not found"}), 404
     except Exception as e:
             return jsonify({"error": str(e)}), 500
 
 
 #4=========Delete order===========
 @order_bp.route('/<int:order_id>', methods=['DELETE'])
+@jwt_required()
 def delete_order(order_id):
     try:
         order = Order.query.filter_by(id=order_id, is_deleted=False).first()
@@ -97,3 +105,35 @@ def delete_order(order_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"error" : str(e)}), 500
+
+#4=========Delete order item ===========
+
+@order_bp.route('/items/<int:item_id>', methods=['DELETE'])
+@jwt_required()
+def delete_order_item(item_id):
+    try:
+        current_user_id = get_jwt_identity()
+        
+        item = OrderItem.query.get(item_id)
+        
+        if not item:
+            return jsonify({"message": "Item not found"}), 404
+            
+        #  Validasi keamanan:item ini milik order pengguna yang sedang login
+        if item.order.user_id != int(current_user_id):
+            return jsonify({"message": "Acces denied"}), 403
+            
+
+        db.session.delete(item)
+        
+        #.Recalculate total_amount 
+        order = item.order
+        order.total_amount -= item.subtotal
+        
+        db.session.commit()
+        
+        return jsonify({"message": "Item berhasil dihapus dari order"}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500

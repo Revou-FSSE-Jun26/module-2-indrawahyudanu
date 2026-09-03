@@ -101,8 +101,27 @@ def delete_product(product_id):
         product.is_deleted = True
         db.session.commit()
 
-        return jsonify({"message" : "product deleted"}), 200
+        return jsonify({"message": "product deleted successfully"}), 200
 
     except Exception as e:
         db.session.rollback()
         return jsonify({"error" : str(e)}), 500
+
+#6 ================Restore product from delete by ID======================
+
+@product_bp.route('/<int:product_id>/restore', methods=['PUT'])
+def restore_product(product_id):
+    try:
+        product = Product.query.filter_by(id=product_id, is_deleted=True).first()
+        if not product:
+            return jsonify({"error" : "product not found"}), 404
+
+        product.is_deleted = False
+        db.session.commit()
+
+        return jsonify({"message": "product restored successfully" }), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error" : str(e)}), 500
+    

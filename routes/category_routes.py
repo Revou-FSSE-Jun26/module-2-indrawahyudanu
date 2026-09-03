@@ -76,11 +76,11 @@ def put_category(category_id):
             db.session.rollback()
             return jsonify({"error" : str(e)}), 500
 
-# #5 =======================Delete a cactegory======================
+# #5 =======================Delete a category======================
 @category_bp.route('/<int:category_id>', methods=['DELETE'])
 def delete_category(category_id): 
     try:
-        category = Category.queery.filter_by(id=category_id, is_deleted=False).first()      
+        category = Category.query.filter_by(id=category_id, is_deleted=False).first()      
         if not category:
             return jsonify({"error" : "category not found"}), 404
 
@@ -92,3 +92,22 @@ def delete_category(category_id):
     except Exception as e:
             db.session.rollback()
             return jsonify({"error" : str(e)}), 500
+
+
+#6 ================Restore product from delete by ID======================
+
+@category_bp.route('/<int:category_id>/restore', methods=['PUT'])
+def restore_category(category_id):
+    try:
+        category = Category.query.filter_by(id=category_id, is_deleted=True).first()
+        if not category:
+            return jsonify({"error" : "category not found"}), 404
+
+        category.is_deleted = False
+        db.session.commit()
+
+        return jsonify({"message": "category restored successfully" }), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error" : str(e)}), 500
