@@ -1,7 +1,14 @@
 # REVO SHOP BACKEND PROJECT
 
-Merupakan platform RESTful API yang dirancang untuk mendukung ekosistem *e-commerce* Revoshop. API ini menangani seluruh logika bisnis utama, mulai dari autentikasi pengguna, manajemen katalog produk, hingga pemrosesan transaksi pemesanan (*orders*).
+## Overview
+Revoshop Merupakan platform RESTful API yang dirancang untuk mendukung ekosistem *e-commerce* . API ini menangani seluruh logika bisnis utama, mulai dari autentikasi pengguna, manajemen katalog produk, hingga pemrosesan transaksi pemesanan (*orders*).
 Backend ini dibangun menggunakan **Flask (Python)** dengan arsitektur modular (*Blueprints*), memanfaatkan **JSON** sebagai format pertukaran data (*data interchange format*), serta menggunakan **PostgreSQL** sebagai sistem manajemen basis data relasional.
+
+## Feature
+* **CRUD Lengkap**: Mendukung pembuatan, pembacaan, pembaruan, dan penghapusan data untuk User, Produk, Kategori, dan Order.
+* **Relasi Many-to-Many**: Menghubungkan Produk dan Order melalui tabel perantara `order_items`.
+* **Validasi Data**: Memastikan input data sesuai format sebelum diproses ke database.
+* **Penanganan Error**: Menggunakan blok `try/except` untuk menangkap error dan memberikan respons yang tepat agar input dari client sesuai yang diharapkan.
 
 ## Tech Stack
 * **Python** 3.14.6
