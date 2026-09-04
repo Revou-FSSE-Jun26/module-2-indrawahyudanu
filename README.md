@@ -100,7 +100,8 @@ Dokumentasi lengkap API beserta contoh request dan response untuk setiap endpoin
 ---
 
 ### 🗄️ Database View (Dbreaver)
-Tampilan tabel-tabel lokal pada pgAdmin setelah dilakukan migrasi:
+Tampilan tabel-tabel lokal pada Database Dbreaver setelah dilakukan migrasi:
+[Lihat Folder Screenshots pgAdmin][.image\Diagram Table All.PNG]
 
 ---
 
@@ -164,3 +165,6 @@ image/post product.png
 
 ### Adding role to Database
 <img src="image/role in dbrever.PNG" width="500" alt="evidence">
+
+
+[def]: ./image
