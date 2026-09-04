@@ -12,11 +12,14 @@ Backend ini dibangun menggunakan **Flask (Python)** dengan arsitektur modular (*
 
 ## Tech Stack
 * **Python** 3.14.6
-* **Flask 3.1.3** (Web Framework)
-* **Werkzeug 3.1.8** (hashing password)
-* **PostgreSQL** (Database)
-* **Flask-SQLAlchemy 2.0.52** (ORM)
-* **Flask-Migrate 4.1.0** (Database Migration)
+* **Flask** 3.1.3 (Web Framework)
+* **Werkzeug** 3.1.8 (Hashing Password)
+* **PostgreSQL** & **pgAdmin** (Database & Database Management)
+* **Flask-SQLAlchemy** 2.0.52 (ORM)
+* **Flask-Migrate** 4.1.0 (Database Migration)
+* **pytest** (Testing Framework)
+* **Locust** (Load Testing)
+* **python-dotenv** (Environment Variable Management)
 * **Postman** (API Testing & Documentation)
 
 ## Project Structure
@@ -52,45 +55,57 @@ Backend ini dibangun menggunakan **Flask (Python)** dengan arsitektur modular (*
 └── audit.sh                # Shell script opsional 
 ```
 
-## Flask intro
+## How to run the project locally 
 
-### 1 . Instalation and activation VENV
+### 1. Clone Referensi Repository 
+```bash
+git clone https://github.com/Revou-FSSE-Jun26/module-2-indrawahyudanu.git
+cd revoshop-db
+```
+
+### 2. Instalasi dan aktivasi VENV
 ```bash
 python -m venv venv
 venv\Scripts\activate 
 ```
 
-### 2.  Install flask-sqlalchemy psycopg2-binary
+### 3. Instalasi Depedency
 ```bash
-pip install flask-sqlalchemy psycopg2-binary
-pip freeze > requirements.txt 
+pip install -r requirements.txt
 ```
 
-### 3. Configure the Database Connection
-
-```bash
-from flask import Flask, jsonify
-from flask_sqlalchemy import SQLAlchemy
-
-app = Flask(__name__)
-
-# TODO 1: Set SQLALCHEMY_DATABASE_URI to connect to your local PostgreSQL 'store_db'
-# Format: postgresql://username:password@host/database_name
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://username:password@localhost/postgres'
-
-# TODO 2: Set SQLALCHEMY_TRACK_MODIFICATIONS to False
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-# TODO 3: Initialize SQLAlchemy with the app
-db = SQLAlchemy(app)
-
-@app.route('/')
-def index():
-    return jsonify({"message": "Flask is connected to PostgreSQL!", "status": "ok"})
-
-if __name__ == '__main__':
-    app.run(debug=True)
+### 4. Mengatur Environment Variable
+Buat file `.env` di direktori utama (root) proyek, lalu isi seperti berikut:
+```env
+   DATABASE_URL=postgresql://postgres:password_kamu@localhost:5432/nama_db_kamu
+   JWT_SECRET_KEY=rahasia_bebas
 ```
+
+### 5. Migrasi Data
+```bash 
+flask db upgrade
+ ```
+
+### 6. Flask Run
+```bash 
+flask run
+```
+
+##  Screenshots & Documentation
+
+###  API Documentation
+Dokumentasi lengkap API beserta contoh request dan response untuk setiap endpoint (GET, POST, PUT, DELETE) :
+[Postman API Documentation](https://documenter.getpostman.com/view/57428406/2sBYAvwAuD)
+
+---
+
+### 🗄️ Database View (Dbreaver)
+Tampilan tabel-tabel lokal pada pgAdmin setelah dilakukan migrasi:
+
+---
+
+### 📊 Load Testing (Locust - Opsional)
+
 
 ## API Endpoints & Usage
 | Method | Endpoint         | Status Code                     |
@@ -111,7 +126,7 @@ if __name__ == '__main__':
         "category_id" : "3"
         
     }
-```
+
 
 ## Evidence 
 
