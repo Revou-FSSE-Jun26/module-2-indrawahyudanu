@@ -91,6 +91,54 @@ flask db upgrade
 flask run
 ```
 
+## API Endpoints & Usage
+##  API Endpoints
+
+Aplikasi ini menggunakan format **JSON** untuk *request* dan *response*. Sebagian besar *endpoint* memerlukan autentikasi **JWT (Bearer Token)** yang dikirim melalui *Header*: `Authorization: Bearer 
+
+### Authentication (`/login`)
+
+| Method | Endpoint | Auth | Deskripsi |
+| :--- | :--- | :---: | :--- |
+| `POST` | `/users` | ❌ | Pendaftaran akun pengguna baru |
+| `POST` | `/login` | ❌ | Otentikasi pengguna & mendapatkan Token JWT |
+
+---
+
+### Products (`/products`)
+
+| Method | Endpoint | Auth | Deskripsi |
+| :--- | :--- | :---: | :--- |
+| `GET` | `/products` | ❌ | Mengambil seluruh daftar produk |
+| `GET` | `/products/<id>` | ❌ | Mengambil detail 1 produk berdasarkan ID |
+| `POST` | `/products` | ❌ | Menambahkan produk baru ke database |
+| `PUT` | `/products/<id>` | ❌ | Memperbarui data produk berdasarkan ID |
+| `DELETE` | `/api/products/<id>` | ❌ | Menghapus produk |
+
+---
+
+### Category (`/category`)
+
+| Method | Endpoint | Auth | Deskripsi |
+| :--- | :--- | :---: | :--- |
+| `GET` | `/categories` | ❌ | Mengambil seluruh daftar produk |
+| `GET` | `/categories/<id>` | ❌ | Mengambil detail 1 produk berdasarkan ID |
+| `POST` | `/categories` | ❌ | Menambahkan produk baru ke database |
+| `PUT` | `/categories/<id>` | ❌ | Memperbarui data produk berdasarkan ID |
+| `DELETE` | `/categories/<id>` | ❌ | Menghapus produk |
+
+---
+
+###  Orders (`/orders`)
+
+| Method | Endpoint | Auth | Deskripsi |
+| :--- | :--- | :---: | :--- |
+| `GET` | `/orders` | 🔒 | Melihat riwayat transaksi/order milik pengguna |
+| `POST` | `/orders` | 🔒 | Membuat order baru (termasuk entri ke `order_items`) |
+| `GET` | `/orders/<id>` | 🔒 | Melihat detail rincian order berdasarkan ID |
+| `DELETE` | `/orders/<id>` | 🔒 | Menghapus produk |
+
+
 ##  Screenshots & Documentation
 
 ###  API Documentation
@@ -98,73 +146,31 @@ Dokumentasi lengkap API beserta contoh request dan response untuk setiap endpoin
 [Postman API Documentation](https://documenter.getpostman.com/view/57428406/2sBYAvwAuD)
 
 ---
+###  DATABASE Documentation
 
-### 🗄️ Database View (Dbreaver)
-Tampilan tabel-tabel lokal pada Database Dbreaver setelah dilakukan migrasi:
-[Lihat Folder Screenshots pgAdmin][.image\Diagram Table All.PNG]
+Database View (Dbreaver)
+[Screenshots dbreaver](https://github.com/Revou-FSSE-Jun26/module-2-indrawahyudanu/blob/main/image/GET%20one%20product%20by%20ID.png)
+
+Tabel Categories
+[Screenshots Tabel Categories](https://github.com/Revou-FSSE-Jun26/module-2-indrawahyudanu/blob/main/image/Tabel%20Categories.PNG)
+
+Tabel Order Item
+[Screenshots order_item](https://github.com/Revou-FSSE-Jun26/module-2-indrawahyudanu/blob/main/image/tabel%20orders%20item.PNG)
+
+Tabel Orders
+[Screenshots Tabel Orders](https://github.com/Revou-FSSE-Jun26/module-2-indrawahyudanu/blob/main/image/Tabel%20orders.PNG)
+
+Tabel Products
+[Screenshots Tabel Products](https://github.com/Revou-FSSE-Jun26/module-2-indrawahyudanu/blob/main/image/tabel%20products.PNG)
+
+Tabel Users
+[Screenshots Tabel Users](https://github.com/Revou-FSSE-Jun26/module-2-indrawahyudanu/blob/main/image/tabel%20users.PNG)
 
 ---
 
-### 📊 Load Testing (Locust - Opsional)
+### Load Testing (Locust)
+
+Load Testing
+[Screenshots Load Testing](https://github.com/Revou-FSSE-Jun26/module-2-indrawahyudanu/blob/main/image/Locust%20test.PNG)
 
 
-## API Endpoints & Usage
-| Method | Endpoint         | Status Code                     |
-| -----  | ------------     | ------------                    |
-| GET    | /products        | 200 OK                          |
-| GET    | /products/<id>   | 200 OK / 404 Not Found          |
-| POST   | /products        | 201 Created / 400 Bad Request   |
-
-
-
-## Sampe POST product table
-```bash
- {
-        "name": "Monitor Lenovo",
-        "sku" : "MO_Lenovo_1",
-        "price": 15000000.0,
-        "stock" : "10",
-        "category_id" : "3"
-        
-    }
-
-
-## Evidence 
-
-### Testing POST product
-image/post product.png
-<img src="image/post product.png" width="500" alt="evidence">
-
-### Testing GET all products
-<img src="image/Get Product.png" width="500" alt="evidence GET all products">
-
-### Testing GET products by ID
-<img src="image/GET%20one%20product%20by%20ID.png" width="500" alt="Evidence & Testing GET products by ID">
-
-### Testing Handling Error 404
-<img src="image/Handling%20error%20404.PNG" width="500" alt="Evidence Testing Handling Error">
-
-## Sampe POST user table
-```bash
-{
-    "username":"Bambang_pamungkas",
-    "email":"bambangp@email.com",
-    "role" : "customer",
-    "password" : "rahasiadong"
-    
-}
-```
-### Testing POST user
-<img src="image/post%20user.png" width="500" alt="evidence">
-
-### Testing GET user by ID
-<img src="image/GET%20user%20by%20ID.PNG" width="500" alt="evidence">
-
-### Testing Handling Error 404
-<img src="image/Handling%20error%20user.PNG" width="500" alt="evidence">
-
-### Adding role to Database
-<img src="image/role in dbrever.PNG" width="500" alt="evidence">
-
-
-[def]: ./image
