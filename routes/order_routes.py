@@ -132,7 +132,7 @@ def delete_order_item(item_id):
         
         db.session.commit()
         
-        return jsonify({"message": "Item berhasil dihapus dari order"}), 200
+        return jsonify({"message": "Delete order Item Succesfully"}), 200
 
     except Exception as e:
         db.session.rollback()
