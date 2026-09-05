@@ -4,6 +4,9 @@
 Revoshop Merupakan platform RESTful API yang dirancang untuk mendukung ekosistem *e-commerce* . API ini menangani seluruh logika bisnis utama, mulai dari autentikasi pengguna, manajemen katalog produk, hingga pemrosesan transaksi pemesanan (*orders*).
 Backend ini dibangun menggunakan **Flask (Python)** dengan arsitektur modular (*Blueprints*), memanfaatkan **JSON** sebagai format pertukaran data (*data interchange format*), serta menggunakan **PostgreSQL** sebagai sistem manajemen basis data relasional.
 
+## Live Deployment
+https://revoshop-indra-wahyu.onrender.com/
+
 ## Feature
 * **CRUD Lengkap**: Mendukung pembuatan, pembacaan, pembaruan, dan penghapusan data untuk User, Produk, Kategori, dan Order.
 * **Relasi Many-to-Many**: Menghubungkan Produk dan Order melalui tabel perantara `order_items`.
@@ -140,6 +143,7 @@ Aplikasi ini menggunakan format **JSON** untuk *request* dan *response*. Sebagia
 
 
 ##  Screenshots & Documentation
+[API base URL](https://revoshop-indra-wahyu.onrender.com/)
 
 ###  API Documentation
 Dokumentasi lengkap API beserta contoh request dan response untuk setiap endpoint (GET, POST, PUT, DELETE) :
