@@ -1,7 +1,7 @@
 from flask import Blueprint ,jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from utils import db
-from models import Order, OrderItem, Product
+from models import Order, OrderItem, Product, User
 
 
 order_bp = Blueprint('order', __name__, url_prefix='/orders')
@@ -87,7 +87,53 @@ def get_order_by_id(order_id):
     except Exception as e:
             return jsonify({"error": str(e)}), 500
 
+#4============Update status order (PUT)
+@order_bp.route('/<int:order_id>/status', methods=['PUT'])
+@jwt_required()
+def update_order_status(order_id):
+    try:
+        current_user_id = get_jwt_identity()
+        current_user = User.query.get(current_user_id)
 
+        if not current_user or current_user.role != 'admin':
+            return jsonify({
+                "success": False,
+                "message": "Akses ditolak. Hanya Admin yang dapat mengubah status order."
+            }), 403
+
+        order = Order.query.filter_by(id=order_id, is_deleted=False).first()
+        if not order:
+            return jsonify({
+                "success": False,
+                "message": f"Order dengan ID {order_id} tidak ditemukan"
+            }), 404
+
+        data = request.get_json() or {}
+        new_status = data.get('status')
+
+        valid_statuses = ['pending', 'processing', 'shipped', 'completed', 'cancelled']
+
+        if not new_status or new_status not in valid_statuses:
+            return jsonify({
+                "success": False,
+                "message": f"Status tidak valid. Gunakan salah satu dari: {', '.join(valid_statuses)}"
+            }), 400
+
+        order.status = new_status
+        db.session.commit()
+
+        return jsonify({
+            "success": True,
+            "message": "Status order berhasil diperbarui",
+            "data": order.to_dict()
+        }), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
 
 
 #5=========Delete order===========
