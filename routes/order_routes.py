@@ -88,7 +88,9 @@ def get_order_by_id(order_id):
             return jsonify({"error": str(e)}), 500
 
 
-#4=========Delete order===========
+
+
+#5=========Delete order===========
 @order_bp.route('/<int:order_id>', methods=['DELETE'])
 @jwt_required()
 def delete_order(order_id):

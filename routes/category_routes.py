@@ -2,16 +2,16 @@ from flask import Blueprint ,jsonify, request
 from utils import db
 from models import Category
 
-
-category_bp = Blueprint('category', __name__, url_prefix='/categories')
+category_bp = Blueprint("category", __name__, url_prefix="/categories")
 
 #1==============Create a new category=================
-@category_bp.route('/', methods=['POST'])
+@category_bp.route("/", methods=["POST"])
 def create_category():
+
     try:
         data = request.get_json()
         category = Category (
-            name=data.get('name')
+            name=data.get("name")
         )
         db.session.add(category)
         db.session.commit()
@@ -23,8 +23,6 @@ def create_category():
         return jsonify({"message" : "error. creating category",
                         "error"   : str(e),
                         "status"  : "error"}), 400
-
-    
 
 #2==============GET list all categories=================
 @category_bp.route('/', methods=['GET'])
