@@ -9,54 +9,82 @@ order_bp = Blueprint('order', __name__, url_prefix='/orders')
 #1=========new orders===========
 @order_bp.route('/', methods=['POST'])
 @jwt_required()
-
 def create_order():
-    current_user_id = get_jwt_identity()
+    try:
+        current_user_id = get_jwt_identity()
 
-    data = request.get_json () or {}
-    product_id = data.get('product_id')
-    quantity = data.get('quantity')
+        data = request.get_json() or {}
+        product_id = data.get('product_id')
+        quantity = data.get('quantity')
 
-    if not product_id:
-        return jsonify({"succes":False, "Message" : "product_id is required"}), 400
+        # 1. Validasi input dasar
+        if not product_id:
+            return jsonify({"success": False, "message": "product_id is required"}), 400
 
+        if quantity is None or not isinstance(quantity, int) or quantity <= 0:
+            return jsonify({
+                "success": False, 
+                "message": "quantity must be an integer greater than 0"
+            }), 400
 
-    product = Product.query.get(product_id)
-    if not product:
-        return jsonify({"success": False, "message": "Product not found"}), 404
+        # 2. Cek produk di database (Pastikan belum di-soft-delete)
+        product = Product.query.filter_by(id=product_id, is_deleted=False).first()
+        if not product:
+            return jsonify({"success": False, "message": "Product not found or inactive"}), 404
 
-    item_subtotal = float(product.price)*quantity
-    total_amount = item_subtotal
-    
+        # 3. Validasi Stok berdasarkan Model Product
+        if not product.is_in_stock or product.stock < quantity:
+            return jsonify({
+                "success": False, 
+                "message": f"Insufficient stock. Available stock: {product.stock}"
+            }), 400
 
-    new_order = Order(
-        user_id=int(current_user_id),
-        total_amount=total_amount,
-        status='pending'
-    )
-    db.session.add(new_order)
-    db.session.flush()
+        # 4. Kalkulasi total
+        item_subtotal = float(product.price) * quantity
+        total_amount = item_subtotal
 
-    order_item = OrderItem(
-    order_id=new_order.id,
-        product_id=product_id,
-        quantity=quantity,
-        subtotal=item_subtotal
-    )
-    db.session.add(order_item)
+        # 5. Buat Order Baru
+        new_order = Order(
+            user_id=int(current_user_id),
+            total_amount=total_amount,
+            status='pending'
+        )
+        db.session.add(new_order)
+        db.session.flush()
 
-    db.session.commit()
+        # 6. Buat OrderItem
+        order_item = OrderItem(
+            order_id=new_order.id,
+            product_id=product.id,
+            quantity=quantity,
+            subtotal=item_subtotal
+        )
+        db.session.add(order_item)
 
-    return jsonify({
-        "success": True,
-        "message": "Order created successfully",
-        "data": {
-            "order_id": new_order.id,
-            "user_id": new_order.user_id,
-            "total_amount": new_order.total_amount,
-            "status": new_order.status
-        }
-    }), 201
+        # 7. Opsional: Potong stok produk otomatis
+        product.stock -= quantity
+        if product.stock == 0:
+            product.is_in_stock = False
+
+        db.session.commit()
+
+        return jsonify({
+            "success": True,
+            "message": "Order created successfully",
+            "data": {
+                "order_id": new_order.id,
+                "user_id": new_order.user_id,
+                "total_amount": new_order.total_amount,
+                "status": new_order.status
+            }
+        }), 201
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
 
 
 #2=========List all orders===========

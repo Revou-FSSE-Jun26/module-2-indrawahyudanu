@@ -147,7 +147,7 @@ Aplikasi ini menggunakan format **JSON** untuk *request* dan *response*. Sebagia
 
 ###  API Documentation
 Dokumentasi lengkap API beserta contoh request dan response untuk setiap endpoint (GET, POST, PUT, DELETE) :
-[Postman API Documentation](https://documenter.getpostman.com/view/57428406/2sBYAvwAuD)
+[Postman API Documentation](https://documenter.getpostman.com/view/57428406/2sBYAxQ9fG)
 
 ---
 ###  DATABASE Documentation
