@@ -26,7 +26,7 @@ def create_category():
 
 #2==============GET list all categories=================
 @category_bp.route('/', methods=['GET'])
-def get_categories():
+def get_all_categories():
     try:
         categories = Category.query.filter_by(is_deleted=False).all()
         return jsonify([category.to_dict() for category in categories]), 200
