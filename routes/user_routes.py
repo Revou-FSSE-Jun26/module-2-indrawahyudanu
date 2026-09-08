@@ -7,6 +7,7 @@ from models import User
 
 user_bp = Blueprint('users', __name__, url_prefix='/users')
 
+
 #1== POST — create new user ====
 @user_bp.route('/', methods=['POST'])
 def create_user():

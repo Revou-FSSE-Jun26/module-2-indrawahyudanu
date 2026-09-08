@@ -7,6 +7,7 @@ from flask_migrate import Migrate
 db = SQLAlchemy()
 migrate = Migrate()
 
+
 # --- Tambahkan Decorator Admin di bawah ini ---
 def admin_required():
     def wrapper(fn):

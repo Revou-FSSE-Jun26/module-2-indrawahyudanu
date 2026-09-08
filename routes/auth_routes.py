@@ -43,6 +43,7 @@ def user_login():
         "access_token": access_token
     }), 200
 
+
 #2=============================== Admin Login =========================
 @auth_bp.route("/admin/login", methods=["POST"])
 def admin_login():

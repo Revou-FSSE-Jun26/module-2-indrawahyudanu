@@ -13,6 +13,7 @@ def create_app(config_class=Config):
 
 
 
+
     # Allow overriding config with a dict (e.g. in tests)
     if isinstance(config_class, dict):
         app.config.update(config_class)
@@ -38,6 +39,8 @@ def create_app(config_class=Config):
     app.register_blueprint(category_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(order_bp)
+
+
 
     return app
 
