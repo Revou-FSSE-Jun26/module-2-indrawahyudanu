@@ -13,10 +13,16 @@ user_bp = Blueprint('users', __name__, url_prefix='/users')
 def create_user():
     try:
         data = request.get_json() or {}
-        raw_password = data.get('password_hash')
 
-        if not raw_password:
-            return jsonify({'error': 'please fill the password'}), 400
+        customer_name = data.get('customer_name')
+        email = data.get('email')
+        raw_password = data.get('password') or data.get('password_hash') # Mendukung key 'password' maupun 'password_hash'
+
+        if not customer_name or not email or not raw_password:
+            return jsonify({'error': 'customer_name, email, and password are required'}), 400
+
+        #2. Tangani role dengan aman (default ke 'user' jika kosong/None)
+        user_role = data.get('role') or 'user'
         
         hashed_password = generate_password_hash(raw_password)
 
@@ -27,10 +33,10 @@ def create_user():
                     role=data.get('role', 'user')
                     )
 
-        db.session.add(user)
+        db.session.add(new_user)
         db.session.commit()
-        return jsonify({"message":"user created",
-                        "user": user.to_dict(),
+        return jsonify({"message":"New user created",
+                        "new_user": new_user.to_dict(),
                         "status":"ok"}),201
     except Exception as e:
         db.session.rollback()

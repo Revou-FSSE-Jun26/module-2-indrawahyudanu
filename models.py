@@ -24,7 +24,7 @@ class User(db.Model):
             "created_at": ( self.created_at.isoformat() if self.created_at else None),
         }
 
-    def hashed_password(self, raw_pass):
+    def set_password(self, raw_pass):
         self.password_hash = generate_password_hash(raw_pass)
 
     def check_password(self, raw_pass):
