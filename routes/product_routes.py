@@ -108,7 +108,6 @@ def delete_product(product_id):
         return jsonify({"error" : str(e)}), 500
 
 #6 ================Restore product from delete by ID======================
-
 @product_bp.route('/<int:product_id>/restore', methods=['PUT'])
 def restore_product(product_id):
     try:

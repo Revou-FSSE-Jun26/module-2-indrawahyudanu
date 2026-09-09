@@ -190,26 +190,23 @@ def delete_order_item(item_id):
     try:
         current_user_id = get_jwt_identity()
         
-        item = OrderItem.query.get(item_id)
+        item = OrderItem.query.filter_by(id=item_id, is_deleted=False).first()
         
         if not item:
-            return jsonify({"message": "Item not found"}), 404
+            return jsonify({"message": "Item not found or already deleted"}), 404
             
-        #  Validasi keamanan:item ini milik order pengguna yang sedang login
         if item.order.user_id != int(current_user_id):
-            return jsonify({"message": "Acces denied"}), 403
-            
+            return jsonify({"message": "Access denied"}), 403
 
-        db.session.delete(item)
+        item.is_deleted = True
         
-        #.Recalculate total_amount 
         order = item.order
         order.total_amount -= item.subtotal
         
         db.session.commit()
         
-        return jsonify({"message": "Delete order Item Succesfully"}), 200
+        return jsonify({"message": "Order item deleted successfully"}), 200
 
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"message": "An error occurred while deleting the item"}), 500

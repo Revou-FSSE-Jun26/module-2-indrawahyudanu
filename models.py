@@ -107,6 +107,7 @@ class OrderItem(db.Model):
     product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     subtotal = db.Column(db.Numeric(10, 2), nullable=False)
+    is_deleted = db.Column(db.Boolean, default=False, nullable=False)
 
     def to_dict(self):
         return {

@@ -2,6 +2,7 @@ from flask import Blueprint ,jsonify, request
 from werkzeug.security import generate_password_hash, check_password_hash
 from utils import db
 from flask_jwt_extended import jwt_required
+from sqlalchemy.exc import IntegrityError
 
 from models import User
 
@@ -38,18 +39,28 @@ def create_user():
         return jsonify({"message":"New user created",
                         "new_user": new_user.to_dict(),
                         "status":"ok"}),201
+    except IntegrityError:
+        # Menangkap error khusus jika data sudah ada (misal: email/username unik)
+        db.session.rollback()
+        return jsonify({
+            "status": "fail",
+            "message": "User or email already exists"
+        }), 400
+
     except Exception as e:
         db.session.rollback()
-        return jsonify({"message" :"error creating user",
-                        "error" : str(e),
-                        "status" : "error"}),400
+        print(f"Error: {e}") 
+        
+        return jsonify({
+            "status": "error",
+            "message": "An error occurred while creating the user"
+        }), 500
 
 
 #2=== GET one user by ID ====
 @user_bp.route('/<int:user_id>', methods=['GET'])
-@jwt_required ()
+@jwt_required()
 def get_user_by_id(user_id):
-    # TODO: Fetch product by ID; return 404 if not found
     try:
         user = User.query.get(user_id)
         if user:
