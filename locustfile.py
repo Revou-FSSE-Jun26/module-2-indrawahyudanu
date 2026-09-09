@@ -36,5 +36,8 @@ class RevoShopUser(HttpUser):
     def create_order(self):
         if self.token:
             headers = {"Authorization": f"Bearer {self.token}"}
-            payload = {"product_id": 1, "quantity": 1}
+            payload = {
+                "product_id": 1,
+                "quantity": 1
+            }
             self.client.post("/orders/", json=payload, headers=headers, name="[Protected] Post Order")
