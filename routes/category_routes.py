@@ -1,28 +1,45 @@
 from flask import Blueprint ,jsonify, request
 from utils import db
 from models import Category
+import os
+import uuid
+from werkzeug.utils import secure_filename
+from flask import current_app
+
 
 category_bp = Blueprint("category", __name__, url_prefix="/categories")
 
 #1==============Create a new category=================
 @category_bp.route("/", methods=["POST"])
 def create_category():
-
     try:
-        data = request.get_json()
-        category = Category (
-            name=data.get("name")
+        data = request.get_json(silent=True) if request.is_json else (request.form or {})
+
+        image_name = None
+        file = request.files.get('image')
+        if file and file.filename != '':
+            image_name = f"{uuid.uuid4().hex[:8]}_{secure_filename(file.filename)}"
+            file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], image_name))
+
+        category = Category(
+            name=data.get("name"),
+            image=image_name
         )
         db.session.add(category)
         db.session.commit()
-        return jsonify({"message" :"category created",
-                        "category" : category.to_dict(),
-                        "status"  : "ok"}), 201
+        return jsonify({
+            "message": "category created",
+            "category": category.to_dict(),
+            "status": "ok"
+        }), 201
     except Exception as e:
         db.session.rollback()
-        return jsonify({"message" : "error. creating category",
-                        "error"   : str(e),
-                        "status"  : "error"}), 400
+        return jsonify({
+            "message": "error creating category",
+            "error": str(e),
+            "status": "error"
+        }), 400
+
 
 #2==============GET list all categories=================
 @category_bp.route('/', methods=['GET'])
@@ -33,46 +50,57 @@ def get_all_categories():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
 #3 ==============GET product by category ID=================
 @category_bp.route('/<int:category_id>', methods=['GET'])
 def get_category(category_id):
     category = Category.query.get_or_404(category_id)
 
-
     return jsonify({
-    "id" : category.id,
-    "name" :category.name,
-    "products" : [
-        {
-            "id" :  product.id,
-            "name" : product.name,
-            "sku" : product.sku,
-            "price" : product.price,
-            "stock" : product.stock,
-            "is_in_stock": product.is_in_stock,
-        } for product in category.products
+        "id": category.id,
+        "name": category.name,
+        "image": f"/static/uploads/{category.image}" if category.image else None,
+        "products": [
+            {
+                "id": product.id,
+                "name": product.name,
+                "sku": product.sku,
+                "price": product.price,
+                "stock": product.stock,
+                "is_in_stock": product.is_in_stock,
+            } for product in category.products
         ]
-
     }), 200
 
+
 #4 =======================Update a cactegory======================
+#4 =======================Update a category======================
 @category_bp.route('/<int:category_id>', methods=['PUT'])
 def put_category(category_id): 
     try:
         category = Category.query.get(category_id)
         if not category:
-                    return jsonify({"error" : "product not found"}), 404
+            return jsonify({"error": "category not found"}), 404
 
-        data = request.get_json()
+        data = request.get_json(silent=True) if request.is_json else (request.form or {})
+
+        file = request.files.get('image')
+        if file and file.filename != '':
+            image_name = f"{uuid.uuid4().hex[:8]}_{secure_filename(file.filename)}"
+            file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], image_name))
+            category.image = image_name
+
         category.name = data.get('name', category.name)
 
         db.session.commit()
-        return jsonify({"message" : "category updated",
-                "category" : category.to_dict()}), 200
+        return jsonify({
+            "message": "category updated",
+            "category": category.to_dict()
+        }), 200
     
     except Exception as e:
-            db.session.rollback()
-            return jsonify({"error" : str(e)}), 500
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
 
 # #5 =======================Delete a category======================
 @category_bp.route('/<int:category_id>', methods=['DELETE'])

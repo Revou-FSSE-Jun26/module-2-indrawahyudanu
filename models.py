@@ -38,11 +38,13 @@ class Category(db.Model):
     name = db.Column(db.String(100), unique=True, nullable=False)
     products = db.relationship('Product', backref='category', lazy=True)
     is_deleted = db.Column(db.Boolean, default=False, nullable=False, server_default='False')
+    image = db.Column(db.String(255), nullable=True)
 
     def to_dict(self):
         return {
             "id": self.id,
             "name": self.name,
+            "image" : f"/static/uploads/{self.image}" if self.image else None,
         }
 
 
@@ -60,6 +62,8 @@ class Product(db.Model):
     is_deleted = db.Column(db.Boolean, default=False, nullable=False, server_default='False')
     category_id = db.Column(db.Integer, db.ForeignKey('categories.id'))
     order_items = db.relationship('OrderItem', backref='product', lazy=True)
+    is_sale = db.Column(db.Boolean, default=False,  server_default='False')  
+    image = db.Column(db.String(255), nullable=True)
 
     def to_dict(self):
         return {
@@ -69,10 +73,13 @@ class Product(db.Model):
             "price": self.price,
             "stock": self.stock,
             "is_in_stock": self.is_in_stock,
+            "is_sale" : self.is_sale,
+            "image" : f"/static/uploads/{self.image}" if self.image else None,
             "category_id": self.category_id,
             "created_at": (self.created_at.isoformat() if self.created_at else None),
             "is_deleted" : self.is_deleted,
             "category_name" : self.category.name if self.category else None
+            
         }
 
 #==4. Table orders===

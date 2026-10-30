@@ -10,6 +10,8 @@ def create_app(config_class=Config):
     app.config.from_object(Config)
     jwt = JWTManager(app)
 
+    import os
+    os.makedirs(app.config.get('UPLOAD_FOLDER', 'static/uploads'), exist_ok=True)
 
 
 

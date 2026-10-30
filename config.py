@@ -14,3 +14,7 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
+
+    UPLOAD_FOLDER = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'static', 'uploads')
+    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp', 'gif'}
+    MAX_CONTENT_LENGTH = 3 * 1024 * 1024  # Maksimal ukuran file 3 MB
