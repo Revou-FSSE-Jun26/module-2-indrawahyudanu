@@ -1,15 +1,14 @@
-from flask import Blueprint ,jsonify, request
-from utils import db
+from flask import Blueprint, jsonify, request
+from utils import db, slugify
 from models import Category
 import os
 import uuid
 from werkzeug.utils import secure_filename
 from flask import current_app
 
-
 category_bp = Blueprint("category", __name__, url_prefix="/categories")
 
-#1==============Create a new category=================
+# 1 ============== Create a new category =================
 @category_bp.route("/", methods=["POST"])
 def create_category():
     try:
@@ -21,8 +20,12 @@ def create_category():
             image_name = f"{uuid.uuid4().hex[:8]}_{secure_filename(file.filename)}"
             file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], image_name))
 
+        cat_name = data.get("name")
+        cat_slug = data.get("slug") or slugify(cat_name)
+
         category = Category(
-            name=data.get("name"),
+            name=cat_name,
+            slug=cat_slug,
             image=image_name
         )
         db.session.add(category)
@@ -41,7 +44,7 @@ def create_category():
         }), 400
 
 
-#2==============GET list all categories=================
+# 2 ============== GET list all categories =================
 @category_bp.route('/', methods=['GET'])
 def get_all_categories():
     try:
@@ -51,32 +54,42 @@ def get_all_categories():
         return jsonify({"error": str(e)}), 500
 
 
-#3 ==============GET product by category ID=================
-@category_bp.route('/<int:category_id>', methods=['GET'])
-def get_category(category_id):
-    category = Category.query.get_or_404(category_id)
+# 3 ============== GET category by ID or Slug =================
+@category_bp.route('/<category_identifier>', methods=['GET'])
+def get_category(category_identifier):
+    try:
+        # Jika angka, cari berdasarkan ID. Jika teks, cari berdasarkan slug.
+        if category_identifier.isdigit():
+            category = Category.query.filter_by(id=int(category_identifier), is_deleted=False).first()
+        else:
+            category = Category.query.filter_by(slug=category_identifier, is_deleted=False).first()
 
-    return jsonify({
-        "id": category.id,
-        "name": category.name,
-        "image": f"/static/uploads/{category.image}" if category.image else None,
-        "products": [
-            {
-                "id": product.id,
-                "name": product.name,
-                "sku": product.sku,
-                "price": product.price,
-                "stock": product.stock,
-                "is_in_stock": product.is_in_stock,
-            } for product in category.products
-        ]
-    }), 200
+        if not category:
+            return jsonify({"error": "category not found"}), 404
+
+        return jsonify({
+            "id": category.id,
+            "name": category.name,
+            "slug": category.slug,
+            "image": f"/static/uploads/{category.image}" if category.image else None,
+            "products": [
+                {
+                    "id": product.id,
+                    "name": product.name,
+                    "sku": product.sku,
+                    "price": product.price,
+                    "stock": product.stock,
+                    "is_in_stock": product.is_in_stock,
+                } for product in category.products if not product.is_deleted
+            ]
+        }), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
-#4 =======================Update a cactegory======================
-#4 =======================Update a category======================
+# 4 ======================= Update a category ======================
 @category_bp.route('/<int:category_id>', methods=['PUT'])
-def put_category(category_id): 
+def put_category(category_id):
     try:
         category = Category.query.get(category_id)
         if not category:
@@ -90,50 +103,54 @@ def put_category(category_id):
             file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], image_name))
             category.image = image_name
 
-        category.name = data.get('name', category.name)
+        if 'name' in data:
+            category.name = data.get('name')
+            category.slug = data.get('slug') or slugify(category.name)
+        elif 'slug' in data:
+            category.slug = slugify(data.get('slug'))
 
         db.session.commit()
         return jsonify({
             "message": "category updated",
             "category": category.to_dict()
         }), 200
-    
+
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
 
-# #5 =======================Delete a category======================
+
+# 5 ======================= Delete a category ======================
 @category_bp.route('/<int:category_id>', methods=['DELETE'])
-def delete_category(category_id): 
+def delete_category(category_id):
     try:
-        category = Category.query.filter_by(id=category_id, is_deleted=False).first()      
+        category = Category.query.filter_by(id=category_id, is_deleted=False).first()
         if not category:
-            return jsonify({"error" : "category not found"}), 404
+            return jsonify({"error": "category not found"}), 404
 
         category.is_deleted = True
         db.session.commit()
 
-        return jsonify({"message" : "category deleted"}), 200
+        return jsonify({"message": "category deleted"}), 200
 
     except Exception as e:
-            db.session.rollback()
-            return jsonify({"error" : str(e)}), 500
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
 
 
-#6 ================Restore product from delete by ID======================
-
+# 6 ================ Restore category by ID ======================
 @category_bp.route('/<int:category_id>/restore', methods=['PUT'])
 def restore_category(category_id):
     try:
         category = Category.query.filter_by(id=category_id, is_deleted=True).first()
         if not category:
-            return jsonify({"error" : "category not found"}), 404
+            return jsonify({"error": "category not found"}), 404
 
         category.is_deleted = False
         db.session.commit()
 
-        return jsonify({"message": "category restored successfully" }), 200
+        return jsonify({"message": "category restored successfully"}), 200
 
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error" : str(e)}), 500
+        return jsonify({"error": str(e)}), 500

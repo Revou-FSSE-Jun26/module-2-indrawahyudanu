@@ -1,5 +1,6 @@
 from datetime import datetime
 from utils import db
+from utils import db, slugify
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
@@ -36,16 +37,25 @@ class Category(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), unique=True, nullable=False)
+    slug = db.Column(db.String(120), unique=True, nullable=True) 
     products = db.relationship('Product', backref='category', lazy=True)
     is_deleted = db.Column(db.Boolean, default=False, nullable=False, server_default='False')
     image = db.Column(db.String(255), nullable=True)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Otomatis buat slug jika belum diisi tapi nama kategori ada
+        if not self.slug and self.name:
+            self.slug = slugify(self.name)
 
     def to_dict(self):
         return {
             "id": self.id,
             "name": self.name,
+            "slug": self.slug,
             "image" : f"/static/uploads/{self.image}" if self.image else None,
         }
+
 
 
 #== 3. Table Products===
@@ -64,7 +74,8 @@ class Product(db.Model):
     order_items = db.relationship('OrderItem', backref='product', lazy=True)
     is_sale = db.Column(db.Boolean, default=False,  server_default='False')  
     image = db.Column(db.String(255), nullable=True)
-
+    
+    
     def to_dict(self):
         return {
             "id": self.id,
@@ -76,11 +87,12 @@ class Product(db.Model):
             "is_sale" : self.is_sale,
             "image" : f"/static/uploads/{self.image}" if self.image else None,
             "category_id": self.category_id,
+            "category_name": self.category.name if self.category else None,
+            "category_slug": self.category.slug if self.category else None,  # <-- Tambahan baru
             "created_at": (self.created_at.isoformat() if self.created_at else None),
             "is_deleted" : self.is_deleted,
-            "category_name" : self.category.name if self.category else None
-            
         }
+
 
 #==4. Table orders===
 class Order(db.Model):
