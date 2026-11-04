@@ -29,7 +29,36 @@ def _check_category(raw):
         return 404, "category not found"
     return None
 
+def _to_bool(value, default=False):
+    """Ubah nilai jadi boolean. Aman untuk JSON (True/False) maupun form-data ("true"/"false")."""
+    if value is None:
+        return default
+    if isinstance(value, bool):
+        return value
+    return str(value).strip().lower() in ("true", "1", "yes", "on")
 
+def _to_number(value, cast):
+    """Ubah nilai jadi angka (int/float). Return None jika kosong atau tidak valid."""
+    if value is None or value == "" or isinstance(value, bool):
+        return None
+    try:
+        return cast(value)
+    except (TypeError, ValueError):
+        return None
+
+def _save_image(file):
+    """Simpan file gambar jika ada. Return nama file, atau None jika tidak ada file.
+    Raise ValueError jika format file tidak diizinkan."""
+    if not file or file.filename == '':
+        return None
+    if not allowed_file(file.filename):
+        raise ValueError("format gambar tidak didukung (png, jpg, jpeg, webp, gif)")
+    image_name = f"{uuid.uuid4().hex[:8]}_{secure_filename(file.filename)}"
+    file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], image_name))
+    return image_name
+
+
+#1=================== POST — create new a product=================
 #1=================== POST — create new a product=================
 @product_bp.route('/', methods=['POST'])
 def create_product():
@@ -46,45 +75,55 @@ def create_product():
                     "status": "error"
                 }), code
 
-        image_name = None
-        file = request.files.get('image')
-        if file and file.filename != '':
-            image_name = f"{uuid.uuid4().hex[:8]}_{secure_filename(file.filename)}"
-            file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], image_name))
+        # Validasi angka DULU, sebelum menyimpan file
+        price = _to_number(data.get('price'), float)
+        if price is None or price < 0:
+            return jsonify({
+                "message": "invalid price",
+                "error": "price must be a non-negative number",
+                "status": "error"
+            }), 400
 
+        stock = _to_number(data.get('stock'), int)
+        if stock is None or stock < 0:
+            return jsonify({
+                "message": "invalid stock",
+                "error": "stock must be a non-negative integer",
+                "status": "error"
+            }), 400
+
+        # Baru simpan foto setelah semua data valid
+        try:
+            image_name = _save_image(request.files.get('image'))
+        except ValueError as e:
+            return jsonify({
+                "message": "invalid image",
+                "error": str(e),
+                "status": "error"
+            }), 400
 
         product = Product(
             name=data.get('name'),
             sku=data.get('sku'),
-            stock=data.get('stock'),
-            price=data.get('price'),
-            category_id=data.get('category_id'),
-            is_in_stock=data.get('is_in_stock',True),
-            is_sale=data.get('is_sale', False),
+            stock=stock,
+            price=price,
+            category_id=_to_number(data.get('category_id'), int),
+            is_in_stock=_to_bool(data.get('is_in_stock'), True),
+            is_sale=_to_bool(data.get('is_sale'), False),
             image=image_name,
             description=data.get('description'),
-
-
         )
-        price = data.get('price')
-        if price is None or price < 0:
-            return jsonify({
-        "message": "invalid price",
-        "error": "price must be a non-negative number",
-        "status": "error"
-            }), 400
-
 
         db.session.add(product)
         db.session.commit()
-        return jsonify({"message":"product created",
+        return jsonify({"message": "product created",
                         "product": product.to_dict(),
-                        "status":"ok"}),201
+                        "status": "ok"}), 201
     except Exception as e:
         db.session.rollback()
-        return jsonify({"message" :"error creating product",
-                        "error" : str(e),
-                        "status" : "error"}),400
+        return jsonify({"message": "error creating product",
+                        "error": str(e),
+                        "status": "error"}), 400
 
 
 #2=============== GET, List all products===============================
@@ -145,7 +184,7 @@ def get_product(product_id):
 @product_bp.route('/<int:product_id>', methods=['PUT'])
 def get_product_by_id(product_id):
     try:
-        product = Product.query.get(product_id)
+        product = db.session.get(Product, product_id)
         if not product:
             return jsonify({"error": "product not found"}), 404
 
@@ -158,21 +197,34 @@ def get_product_by_id(product_id):
                 code, msg = category_error
                 return jsonify({"error": msg}), code
 
-        # Handle jika ada upload foto
-        file = request.files.get('image')
-        if file and file.filename != '':
-            image_name = f"{uuid.uuid4().hex[:8]}_{secure_filename(file.filename)}"
-            file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], image_name))
+        # Validasi angka hanya jika field-nya dikirim (field lain tetap nilai lama)
+        if 'price' in data:
+            price = _to_number(data.get('price'), float)
+            if price is None or price < 0:
+                return jsonify({"error": "price must be a non-negative number"}), 400
+        if 'stock' in data:
+            stock = _to_number(data.get('stock'), int)
+            if stock is None or stock < 0:
+                return jsonify({"error": "stock must be a non-negative integer"}), 400
+
+        # Simpan foto baru (jika ada) setelah validasi lolos
+        try:
+            image_name = _save_image(request.files.get('image'))
+        except ValueError as e:
+            return jsonify({"error": str(e)}), 400
+        if image_name:
             product.image = image_name
 
         product.name = data.get('name', product.name)
         product.sku = data.get('sku', product.sku)
-        product.stock = data.get('stock', product.stock)
-        product.price = data.get('price', product.price)
-        product.category_id = data.get('category_id', product.category_id)
-        product.is_sale = data.get('is_sale', product.is_sale)
         product.description = data.get('description', product.description)
-
+        if 'price' in data:
+            product.price = price
+        if 'stock' in data:
+            product.stock = stock
+        if 'category_id' in data:
+            product.category_id = _to_number(data.get('category_id'), int)
+        product.is_sale = _to_bool(data.get('is_sale'), product.is_sale)
 
         db.session.commit()
 
@@ -184,7 +236,6 @@ def get_product_by_id(product_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
-
 
 
 
