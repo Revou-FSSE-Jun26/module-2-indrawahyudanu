@@ -1,6 +1,7 @@
 from flask import Blueprint ,jsonify, request
 from utils import db
-from models import Product
+from models import Product, Category
+from sqlalchemy import or_, func
 
 import os
 import uuid
@@ -15,13 +16,36 @@ def allowed_file(filename):
 product_bp = Blueprint('product', __name__, url_prefix='/products')
 
 
+def _check_category(raw):
+    """Cek category_id: harus integer, ada, dan belum dihapus.
+    Return None jika valid, atau (status_code, pesan) jika tidak."""
+    if isinstance(raw, bool):
+        return 400, "category_id must be an integer"
+    try:
+        cid = int(raw)
+    except (ValueError, TypeError):
+        return 400, "category_id must be an integer"
+    if not Category.query.filter_by(id=cid, is_deleted=False).first():
+        return 404, "category not found"
+    return None
+
+
 #1=================== POST — create new a product=================
 @product_bp.route('/', methods=['POST'])
 def create_product():
     try:
         data = request.get_json(silent=True) if request.is_json else (request.form or {})
 
-       
+        if data.get('category_id') is not None:
+            category_error = _check_category(data.get('category_id'))
+            if category_error:
+                code, msg = category_error
+                return jsonify({
+                    "message": "invalid category",
+                    "error": msg,
+                    "status": "error"
+                }), code
+
         image_name = None
         file = request.files.get('image')
         if file and file.filename != '':
@@ -65,11 +89,30 @@ def create_product():
 @product_bp.route('/', methods=['GET'])
 def get_products():
     try:
-        query = Product.query.filter_by(is_deleted=False)
+        # outerjoin: produk tanpa kategori tetap tampil, produk dengan kategori terhapus disembunyikan
+        query = Product.query.outerjoin(Category, Product.category_id == Category.id).filter(
+            Product.is_deleted == False,
+            or_(Product.category_id.is_(None), Category.is_deleted == False)
+        )
 
         is_sale = request.args.get('is_sale')   # baca query param
         if is_sale == 'true':
-            query = query.filter_by(is_sale=True)
+            query = query.filter(Product.is_sale == True)
+
+        category_id = request.args.get('category_id')
+        if category_id not in (None, ''):
+            try:
+                cid = int(category_id)
+            except ValueError:
+                return jsonify({"error": "category_id must be an integer"}), 400
+            query = query.filter(Product.category_id == cid, Category.is_deleted == False)
+
+        category = (request.args.get('category') or '').strip().lower()
+        if category:
+            query = query.filter(
+                Category.is_deleted == False,
+                or_(func.lower(Category.slug) == category, func.lower(Category.name) == category)
+            )
 
         q = request.args.get('q')          # baca ?q= dari URL
         if q:
@@ -106,6 +149,12 @@ def get_product_by_id(product_id):
 
         # Aman: baca JSON jika JSON, baca form jika form-data
         data = request.get_json(silent=True) if request.is_json else (request.form or {})
+
+        if data.get('category_id') is not None:
+            category_error = _check_category(data.get('category_id'))
+            if category_error:
+                code, msg = category_error
+                return jsonify({"error": msg}), code
 
         # Handle jika ada upload foto
         file = request.files.get('image')
