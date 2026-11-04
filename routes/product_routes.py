@@ -61,7 +61,9 @@ def create_product():
             category_id=data.get('category_id'),
             is_in_stock=data.get('is_in_stock',True),
             is_sale=data.get('is_sale', False),
-            image=image_name
+            image=image_name,
+            description=data.get('description'),
+
 
         )
         price = data.get('price')
@@ -169,6 +171,8 @@ def get_product_by_id(product_id):
         product.price = data.get('price', product.price)
         product.category_id = data.get('category_id', product.category_id)
         product.is_sale = data.get('is_sale', product.is_sale)
+        product.description = data.get('description', product.description)
+
 
         db.session.commit()
 

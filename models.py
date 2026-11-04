@@ -74,6 +74,8 @@ class Product(db.Model):
     order_items = db.relationship('OrderItem', backref='product', lazy=True)
     is_sale = db.Column(db.Boolean, default=False,  server_default='False')  
     image = db.Column(db.String(255), nullable=True)
+    description = db.Column(db.String(500), nullable=True)
+
     
     
     def to_dict(self):
@@ -86,11 +88,13 @@ class Product(db.Model):
             "is_in_stock": self.is_in_stock,
             "is_sale" : self.is_sale,
             "image" : f"/static/uploads/{self.image}" if self.image else None,
+            "description" : self.description,
             "category_id": self.category_id,
             "category_name": self.category.name if self.category else None,
             "category_slug": self.category.slug if self.category else None,  # <-- Tambahan baru
             "created_at": (self.created_at.isoformat() if self.created_at else None),
             "is_deleted" : self.is_deleted,
+
         }
 
 
