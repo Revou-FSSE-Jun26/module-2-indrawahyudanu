@@ -9,11 +9,12 @@ from flask_cors import CORS
 
 def create_app(config_class=Config):
     app = Flask(__name__)
-    CORS(app, origins=[
+    CORS(app, resources={r"/*": {"origins": [
     "http://localhost:3000",
     "https://revoshop-seven.vercel.app",
-    ])
-    
+]}})
+
+
     app.config.from_object(Config)
     jwt = JWTManager(app)
 
