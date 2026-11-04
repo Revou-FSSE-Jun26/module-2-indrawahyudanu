@@ -4,9 +4,13 @@ from config import Config
 from utils import db
 from flask_jwt_extended import JWTManager
 
+from flask_cors import CORS
+
 
 def create_app(config_class=Config):
     app = Flask(__name__)
+    CORS(app, origins=[
+        "https://revoshop-seven.vercel.app/",])
     app.config.from_object(Config)
     jwt = JWTManager(app)
 
@@ -49,6 +53,7 @@ def create_app(config_class=Config):
 from datetime import timedelta
 
 app = create_app()
+
 
 
 if __name__ == '__main__':
