@@ -84,6 +84,7 @@ def admin_login():
     refresh_token = create_refresh_token(identity=str(is_user.id))
 
     return jsonify({
-        "success": True,
-        "access_token": access_token
-    }), 200
+    "success": True,
+    "access_token": access_token,
+    "user": is_user.to_dict()   # memuat id, customer_name, email, role
+}), 200
